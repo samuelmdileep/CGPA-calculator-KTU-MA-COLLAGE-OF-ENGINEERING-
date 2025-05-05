@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MA College of Engineering - SCGP & CGP Calculator</title>
+  <title>MA College of Engineering - SCGPA & CGPA Calculator</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -106,31 +106,31 @@
 <body>
   <div class="container">
     <img src="https://www.mace.ac.in/images/logo-footer.png" class="logo" alt="MACE Logo" />
-    <h1>MA College of Engineering - SCGP & CGP Calculator<br>(Autonomous Batch)</h1>
+    <h1>MA College of Engineering - SCGPA & CGPA Calculator<br>(Autonomous Batch)</h1>
 
     <div id="subject-container">
       <!-- Subjects added via JS -->
     </div>
 
     <button class="add-btn" onclick="addSubject()">+ Add Subject</button>
-    <button class="calc-btn" onclick="calculateSCGP()">Calculate SCGP</button>
+    <button class="calc-btn" onclick="calculateSCGPA()">Calculate SCGPA</button>
 
     <div class="result" id="scgpResult"></div>
 
-    <h3 style="margin-top: 40px;">Total CGP Calculation</h3>
+    <h3 style="margin-top: 40px;">Total CGPA Calculation</h3>
     <div id="scgpInputs">
       <div class="scgp-row">
         <input type="number" step="0.01" placeholder="SCGP 1" class="scgp-value"/>
       </div>
     </div>
-    <button class="add-btn" onclick="addSCGPField()">+ Add SCGP</button>
-    <button class="calc-btn" onclick="calculateTotalCGP()">Calculate Total CGP</button>
+    <button class="add-btn" onclick="addSCGPField()">+ Add SCGPA</button>
+    <button class="calc-btn" onclick="calculateTotalCGPA()">Calculate Total CGPA</button>
 
     <div class="result" id="totalCGPResult"></div>
 
     <div class="footer-logo">
       <img src="https://www.mace.ac.in/images/logo-footer.png" alt="MACE" />
-      <span>SAM</span>
+     
     </div>
   </div>
 
@@ -170,7 +170,7 @@
       const creditInput = document.createElement("input");
       creditInput.type = "number";
       creditInput.classList.add("dim-input");
-      creditInput.placeholder = "Click to Enter";
+      creditInput.placeholder = "Enter the credit";
       creditInput.readOnly = true;
 
       creditInput.addEventListener("focus", function () {
@@ -193,7 +193,7 @@
       }
     }
 
-    function calculateSCGP() {
+    function calculateSCGPA() {
       const container = document.getElementById("subject-container");
       const rows = container.getElementsByClassName("grid");
 
@@ -234,7 +234,7 @@
       container.appendChild(row);
     }
 
-    function calculateTotalCGP() {
+    function calculateTotalCGPA() {
       const inputs = document.getElementsByClassName("scgp-value");
       let total = 0, count = 0;
 
@@ -250,9 +250,9 @@
       if (count > 0) {
         const cgpa = (total / count).toFixed(2);
         const percentage = (cgpa * 10).toFixed(2);
-        result.innerHTML = `Total CGP: ${cgpa} <br>Equivalent Percentage: ${percentage}%`;
+        result.innerHTML = `Total CGPA: ${cgpa} <br>Equivalent Percentage: ${percentage}%`;
       } else {
-        result.textContent = "Enter valid SCGP values.";
+        result.textContent = "Enter valid SCGPA values.";
       }
     }
 
