@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MA College of Engineering - SCGP & CGP Calculator</title>
+  <title>MA College of Engineering - SCGPA & CGPA Calculator</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -56,8 +56,8 @@
 
     .grid {
       display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 15px;
+      grid-template-columns: 2fr 1fr auto;
+      gap: 10px;
       margin-bottom: 15px;
     }
 
@@ -77,7 +77,7 @@
       background-color: #f9f9f9;
     }
 
-    .add-btn, .calc-btn {
+    .add-btn, .calc-btn, .reset-btn {
       background-color: #004080;
       color: white;
       border: none;
@@ -85,8 +85,21 @@
       margin-right: 10px;
     }
 
-    .add-btn:hover, .calc-btn:hover {
+    .add-btn:hover, .calc-btn:hover, .reset-btn:hover {
       background-color: #0059b3;
+    }
+
+    .remove-btn {
+      background-color: #d9534f;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .remove-btn:hover {
+      background-color: #c9302c;
     }
 
     .scgp-row {
@@ -101,59 +114,81 @@
       font-weight: bold;
       color: #003366;
     }
+
+    @media (max-width: 600px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .container {
+        padding: 20px;
+      }
+
+      .logo {
+        display: none;
+      }
+
+      .footer-logo {
+        position: relative;
+        justify-content: center;
+        margin-top: 20px;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <img src="https://www.mace.ac.in/images/logo-footer.png" class="logo" alt="MACE Logo" />
-    <h1>MA College of Engineering - SCGP & CGP Calculator<br>(Autonomous Batch)</h1>
+    <h1>MA College of Engineering - SCGPA & CGPA Calculator<br>(Autonomous Batch)</h1>
 
-    <div id="subject-container">
-      <!-- Subjects added via JS -->
-    </div>
+    <div id="subject-container"></div>
 
     <button class="add-btn" onclick="addSubject()">+ Add Subject</button>
-    <button class="calc-btn" onclick="calculateSCGP()">Calculate SCGP</button>
+    <button class="calc-btn" onclick="calculateSCGPA()">Calculate SCGPA</button>
+    <button class="reset-btn" onclick="resetAll()">🔄 Reset</button>
 
     <div class="result" id="scgpResult"></div>
 
-    <h3 style="margin-top: 40px;">Total CGP Calculation</h3>
+    <h3 style="margin-top: 40px;">Total CGPA Calculation</h3>
     <div id="scgpInputs">
       <div class="scgp-row">
         <input type="number" step="0.01" placeholder="SCGP 1" class="scgp-value"/>
       </div>
     </div>
-    <button class="add-btn" onclick="addSCGPField()">+ Add SCGP</button>
-    <button class="calc-btn" onclick="calculateTotalCGP()">Calculate Total CGP</button>
+    <button class="add-btn" onclick="addSCGPAField()">+ Add SCGPA</button>
+    <button class="calc-btn" onclick="calculateTotalCGPA()">Calculate Total CGPA</button>
 
     <div class="result" id="totalCGPResult"></div>
 
     <div class="footer-logo">
       <img src="https://www.mace.ac.in/images/logo-footer.png" alt="MACE" />
-      <span>SAM</span>
     </div>
   </div>
 
   <script>
     const gradePoints = {
-      "S": 10,
-      "A+": 9,
-      "A": 8.5,
-      "B+": 8,
-      "B": 7.5,
-      "C+": 7,
-      "C": 6.5,
-      "D": 6,
-      "P": 5.5,
-      "F": 0,
-      "FE": 0,
-      "I": 0,
-      "AB": 0
+      "S": 10, "A+": 9, "A": 8.5, "B+": 8, "B": 7.5,
+      "C+": 7, "C": 6.5, "D": 6, "P": 5.5, "F": 0,
+      "FE": 0, "I": 0, "AB": 0
     };
 
     let subjectCount = 0;
 
-    function createSubjectRow() {
+    function saveSubjects() {
+      const rows = document.querySelectorAll("#subject-container .grid");
+      const data = Array.from(rows).map(row => ({
+        grade: row.querySelector("select").value,
+        credit: row.querySelector("input").value
+      }));
+      localStorage.setItem("subjects", JSON.stringify(data));
+    }
+
+    function loadSubjects() {
+      const data = JSON.parse(localStorage.getItem("subjects") || "[]");
+      data.forEach(({ grade, credit }) => addSubject(grade, credit));
+    }
+
+    function createSubjectRow(selectedGrade = "S", creditValue = "") {
       const container = document.getElementById("subject-container");
       const row = document.createElement("div");
       row.className = "grid";
@@ -163,52 +198,62 @@
         const option = document.createElement("option");
         option.value = grade;
         option.textContent = grade;
-        grade === "S" && (option.selected = true);
+        if (grade === selectedGrade) option.selected = true;
         gradeSelect.appendChild(option);
       }
 
       const creditInput = document.createElement("input");
       creditInput.type = "number";
+      creditInput.placeholder = "Enter the Credit";
       creditInput.classList.add("dim-input");
-      creditInput.placeholder = "Click to Enter";
-      creditInput.readOnly = true;
+      creditInput.value = creditValue;
 
       creditInput.addEventListener("focus", function () {
-        this.readOnly = false;
         this.classList.remove("dim-input");
-        this.placeholder = "Eg: 3";
       });
 
-      row.appendChild(gradeSelect);
-      row.appendChild(creditInput);
+      const removeBtn = document.createElement("button");
+      removeBtn.textContent = "❌";
+      removeBtn.className = "remove-btn";
+      removeBtn.onclick = function () {
+        row.remove();
+        subjectCount--;
+        saveSubjects();
+      };
+
+      [gradeSelect, creditInput, removeBtn].forEach(el => {
+        el.addEventListener("change", saveSubjects);
+        el.addEventListener("input", saveSubjects);
+      });
+
+      row.append(gradeSelect, creditInput, removeBtn);
       container.appendChild(row);
     }
 
-    function addSubject() {
+    function addSubject(grade = "S", credit = "") {
       if (subjectCount < 10) {
-        createSubjectRow();
+        createSubjectRow(grade, credit);
         subjectCount++;
+        saveSubjects();
       } else {
         alert("Maximum 10 subjects allowed.");
       }
     }
 
-    function calculateSCGP() {
-      const container = document.getElementById("subject-container");
-      const rows = container.getElementsByClassName("grid");
+    function calculateSCGPA() {
+      const rows = document.querySelectorAll("#subject-container .grid");
 
       let totalCredits = 0;
       let totalPoints = 0;
 
-      for (let row of rows) {
-        const grade = row.children[0].value;
-        const credits = parseFloat(row.children[1].value);
-
-        if (isNaN(credits)) continue;
-
-        totalCredits += credits;
-        totalPoints += gradePoints[grade] * credits;
-      }
+      rows.forEach(row => {
+        const grade = row.querySelector("select").value;
+        const credits = parseFloat(row.querySelector("input").value);
+        if (!isNaN(credits)) {
+          totalCredits += credits;
+          totalPoints += gradePoints[grade] * credits;
+        }
+      });
 
       const result = document.getElementById("scgpResult");
       if (totalCredits > 0) {
@@ -219,7 +264,7 @@
       }
     }
 
-    function addSCGPField() {
+    function addSCGPAField() {
       const container = document.getElementById("scgpInputs");
       const row = document.createElement("div");
       row.className = "scgp-row";
@@ -234,7 +279,7 @@
       container.appendChild(row);
     }
 
-    function calculateTotalCGP() {
+    function calculateTotalCGPA() {
       const inputs = document.getElementsByClassName("scgp-value");
       let total = 0, count = 0;
 
@@ -256,8 +301,19 @@
       }
     }
 
-    for (let i = 0; i < 6; i++) {
-      addSubject();
+    function resetAll() {
+      localStorage.removeItem("subjects");
+      document.getElementById("subject-container").innerHTML = "";
+      document.getElementById("scgpResult").textContent = "";
+      subjectCount = 0;
+      for (let i = 0; i < 6; i++) addSubject();
+    }
+
+    // Load saved inputs or default 6
+    if (localStorage.getItem("subjects")) {
+      loadSubjects();
+    } else {
+      for (let i = 0; i < 6; i++) addSubject();
     }
   </script>
 </body>
