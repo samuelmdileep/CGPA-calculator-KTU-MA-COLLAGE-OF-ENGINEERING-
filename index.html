@@ -27,9 +27,8 @@
 
     .logo {
       width: 60px;
-      position: absolute;
-      top: 20px;
-      left: 20px;
+      display: block;
+      margin: 0 auto 10px auto;
     }
 
     .footer-logo {
@@ -51,7 +50,7 @@
       text-align: center;
       color: #003366;
       font-size: 24px;
-      margin-bottom: 50px;
+      margin-bottom: 30px;
     }
 
     .grid {
@@ -77,7 +76,7 @@
       background-color: #f9f9f9;
     }
 
-    .add-btn, .calc-btn {
+    .add-btn, .calc-btn, .clear-btn, .syllabus-btn {
       background-color: #004080;
       color: white;
       border: none;
@@ -85,7 +84,7 @@
       margin-right: 10px;
     }
 
-    .add-btn:hover, .calc-btn:hover {
+    .add-btn:hover, .calc-btn:hover, .clear-btn:hover, .syllabus-btn:hover {
       background-color: #0059b3;
     }
 
@@ -114,6 +113,7 @@
 
     <button class="add-btn" onclick="addSubject()">+ Add Subject</button>
     <button class="calc-btn" onclick="calculateSCGPA()">Calculate SCGPA</button>
+    <button class="clear-btn" onclick="clearSCGPAFields()">Clear SCGPA</button>
 
     <div class="result" id="scgpResult"></div>
 
@@ -125,30 +125,24 @@
     </div>
     <button class="add-btn" onclick="addSCGPField()">+ Add SCGPA</button>
     <button class="calc-btn" onclick="calculateTotalCGPA()">Calculate Total CGPA</button>
+    <button class="clear-btn" onclick="clearCGPAFields()">Clear CGPA</button>
 
     <div class="result" id="totalCGPResult"></div>
+    <button class="calc-btn" onclick="printSummary()">🖨️ Print Summary</button>
+
+
+    <button class="syllabus-btn" onclick="viewSyllabus()">📘 View Syllabus</button>
 
     <div class="footer-logo">
       <img src="https://www.mace.ac.in/images/logo-footer.png" alt="MACE" />
-     
     </div>
   </div>
 
   <script>
     const gradePoints = {
-      "S": 10,
-      "A+": 9,
-      "A": 8.5,
-      "B+": 8,
-      "B": 7.5,
-      "C+": 7,
-      "C": 6.5,
-      "D": 6,
-      "P": 5.5,
-      "F": 0,
-      "FE": 0,
-      "I": 0,
-      "AB": 0
+      "S": 10, "A+": 9, "A": 8.5, "B+": 8, "B": 7.5,
+      "C+": 7, "C": 6.5, "D": 6, "P": 5.5, "F": 0,
+      "FE": 0, "I": 0, "AB": 0
     };
 
     let subjectCount = 0;
@@ -188,24 +182,20 @@
       if (subjectCount < 10) {
         createSubjectRow();
         subjectCount++;
+        saveSubjectsToStorage();
       } else {
         alert("Maximum 10 subjects allowed.");
       }
     }
 
     function calculateSCGPA() {
-      const container = document.getElementById("subject-container");
-      const rows = container.getElementsByClassName("grid");
-
-      let totalCredits = 0;
-      let totalPoints = 0;
+      const rows = document.getElementsByClassName("grid");
+      let totalCredits = 0, totalPoints = 0;
 
       for (let row of rows) {
         const grade = row.children[0].value;
         const credits = parseFloat(row.children[1].value);
-
         if (isNaN(credits)) continue;
-
         totalCredits += credits;
         totalPoints += gradePoints[grade] * credits;
       }
@@ -214,6 +204,7 @@
       if (totalCredits > 0) {
         const scgp = (totalPoints / totalCredits).toFixed(2);
         result.textContent = `SCGP (Semester CGP): ${scgp}`;
+        localStorage.setItem("scgpResult", scgp);
       } else {
         result.textContent = "Enter valid credits.";
       }
@@ -223,13 +214,11 @@
       const container = document.getElementById("scgpInputs");
       const row = document.createElement("div");
       row.className = "scgp-row";
-
       const input = document.createElement("input");
       input.type = "number";
       input.step = "0.01";
       input.placeholder = `SCGP ${container.children.length + 1}`;
       input.className = "scgp-value";
-
       row.appendChild(input);
       container.appendChild(row);
     }
@@ -237,7 +226,6 @@
     function calculateTotalCGPA() {
       const inputs = document.getElementsByClassName("scgp-value");
       let total = 0, count = 0;
-
       for (let input of inputs) {
         const val = parseFloat(input.value);
         if (!isNaN(val)) {
@@ -245,20 +233,108 @@
           count++;
         }
       }
-
       const result = document.getElementById("totalCGPResult");
       if (count > 0) {
         const cgpa = (total / count).toFixed(2);
         const percentage = (cgpa * 10).toFixed(2);
         result.innerHTML = `Total CGPA: ${cgpa} <br>Equivalent Percentage: ${percentage}%`;
+        localStorage.setItem("totalCGPA", cgpa);
       } else {
         result.textContent = "Enter valid SCGPA values.";
       }
     }
 
-    for (let i = 0; i < 6; i++) {
-      addSubject();
+    function clearSCGPAFields() {
+      const rows = document.getElementsByClassName("grid");
+      for (let row of rows) {
+        row.children[0].value = "S";
+        row.children[1].value = "";
+      }
+      document.getElementById("scgpResult").textContent = "";
     }
+
+    function clearCGPAFields() {
+      const inputs = document.getElementsByClassName("scgp-value");
+      for (let input of inputs) {
+        input.value = "";
+      }
+      document.getElementById("totalCGPResult").textContent = "";
+    }
+    function printSummary() {
+  const win = window.open('', '', 'height=800,width=1000');
+  const logoURL = "https://www.mace.ac.in/images/logo-footer.png";
+  const rows = document.getElementsByClassName("grid");
+
+  let table = `<h2 style="text-align:center;color:#003366;">SCGPA Summary</h2>`;
+  table += `<table style="width:100%;border-collapse:collapse;font-family:'Segoe UI';font-size:16px;margin:auto;">
+              <tr style="background:#004080;color:white;">
+                <th style="padding:10px;border:1px solid #ccc;">Subject</th>
+                <th style="padding:10px;border:1px solid #ccc;">Grade</th>
+                <th style="padding:10px;border:1px solid #ccc;">Credit</th>
+              </tr>`;
+  
+  for (let i = 0; i < rows.length; i++) {
+    const grade = rows[i].children[0].value;
+    const credit = rows[i].children[1].value || "-";
+    table += `<tr>
+                <td style="padding:8px;border:1px solid #ccc;text-align:center;">Subject ${i + 1}</td>
+                <td style="padding:8px;border:1px solid #ccc;text-align:center;">${grade}</td>
+                <td style="padding:8px;border:1px solid #ccc;text-align:center;">${credit}</td>
+              </tr>`;
+  }
+
+  const scgp = localStorage.getItem("scgpResult") || "-";
+  table += `<tr style="background:#f0f8ff;font-weight:bold;">
+              <td colspan="2" style="padding:10px;border:1px solid #ccc;text-align:right;">SCGPA</td>
+              <td style="padding:10px;border:1px solid #ccc;text-align:center;">${scgp}</td>
+            </tr>`;
+  table += `</table>`;
+
+  const footer = `<p style="text-align:center;font-size:13px;margin-top:30px;color:#555;"></p>`;
+
+  win.document.write(`
+    <html>
+    <head>
+      <title>SCGPA Summary</title>
+      <style>
+        body {
+          background: url('${logoURL}') no-repeat center center;
+          background-size: 200px;
+          background-attachment: fixed;
+          opacity: 1.5;
+          padding: 50px;
+        }
+      </style>
+    </head>
+    <body>
+      ${table}
+      ${footer}
+    </body>
+    </html>
+  `);
+
+  win.document.close();
+  win.print();
+}
+
+
+    function viewSyllabus() {
+      window.open("https://www.mace.ac.in/academics/syllabus", "_blank");
+    }
+
+    function saveSubjectsToStorage() {
+      localStorage.setItem("subjectCount", subjectCount);
+    }
+
+    function loadSubjectsFromStorage() {
+      const count = parseInt(localStorage.getItem("subjectCount")) || 6;
+      for (let i = 0; i < count; i++) {
+        createSubjectRow();
+      }
+      subjectCount = count;
+    }
+
+    loadSubjectsFromStorage();
   </script>
 </body>
 </html>
