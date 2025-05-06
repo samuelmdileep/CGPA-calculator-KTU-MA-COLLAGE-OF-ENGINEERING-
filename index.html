@@ -154,93 +154,33 @@
       <img src="https://www.mace.ac.in/images/logo-footer.png" alt="MACE" />
     </div>
   </div>
- <!-- JavaScript Code -->
-<script>
-    // Save subject data to localStorage
-    function saveSubjectsToLocalStorage() {
-        const rows = document.getElementsByClassName("grid");
-        const subjects = [];
-        
-        for (let row of rows) {
-            const grade = row.children[0].value;
-            const credit = row.children[1].value;
-            subjects.push({ grade, credit });
-        }
-        localStorage.setItem('subjects', JSON.stringify(subjects));
-    }
-
-    // Load subjects from localStorage
-    function loadSubjectsFromLocalStorage() {
-        const subjects = JSON.parse(localStorage.getItem('subjects')) || [];
-        subjects.forEach(subject => {
-            createSubjectRow(subject.grade, subject.credit);
-        });
-        subjectCount = subjects.length;
-    }
-
-    // Create a subject row with pre-filled values if available
-    function createSubjectRow(grade = "S", credit = "") {
-        const container = document.getElementById("subject-container");
-        const row = document.createElement("div");
-        row.className = "grid";
-
-        const gradeSelect = document.createElement("select");
-        for (const gradeOption in gradePoints) {
-            const option = document.createElement("option");
-            option.value = gradeOption;
-            option.textContent = gradeOption;
-            if (gradeOption === grade) option.selected = true;
-            gradeSelect.appendChild(option);
-        }
-
-        const creditInput = document.createElement("input");
-        creditInput.type = "number";
-        creditInput.classList.add("dim-input");
-        creditInput.placeholder = "Enter the credit";
-        creditInput.value = credit;
-        creditInput.readOnly = true;
-
-        creditInput.addEventListener("focus", function () {
-            this.readOnly = false;
-            this.classList.remove("dim-input");
-            this.placeholder = "Eg: 3";
-        });
-
-        row.appendChild(gradeSelect);
-        row.appendChild(creditInput);
-        container.appendChild(row);
-    }
-
-    // Add a new subject
-    function addSubject() {
-        if (subjectCount < 10) {
-            createSubjectRow();
-            subjectCount++;
-            saveSubjectsToLocalStorage();
-        } else {
-            alert("Maximum 10 subjects allowed.");
-        }
-    }
-
-    // Clear subject data
-    function clearSCGPAFields() {
-        const rows = document.getElementsByClassName("grid");
-        for (let row of rows) {
-            row.children[0].value = "S";
-            row.children[1].value = "";
-        }
-        document.getElementById("scgpResult").textContent = "";
-        saveSubjectsToLocalStorage();
-    }
-
-    // Call to load subjects when the page is loaded
-    window.onload = function() {
-        loadSubjectsFromLocalStorage();
-    };
-</script>
 
   <script>
-     
+     // Function to save data to localStorage
+    function saveToLocalStorage() {
+      var gradeInput = document.getElementById('gradeInput').value;
+      var creditInput = document.getElementById('creditInput').value;
+
+      // Save them to localStorage with specific keys
+      localStorage.setItem('grade', gradeInput);
+      localStorage.setItem('credit', creditInput);
+    }
+
+    // Function to load data from localStorage
+    function loadFromLocalStorage() {
+      var savedGrade = localStorage.getItem('grade');
+      var savedCredit = localStorage.getItem('credit');
+      
+      if (savedGrade) {
+        document.getElementById('gradeInput').value = savedGrade;
+      }
+      if (savedCredit) {
+        document.getElementById('creditInput').value = savedCredit;
+      }
+    }
+
+    // Call the function to load data when the page is loaded
+    window.onload = loadFromLocalStorage;
     const gradePoints = {
       "S": 10, "A+": 9, "A": 8.5, "B+": 8, "B": 7.5,
       "C+": 7, "C": 6.5, "D": 6, "P": 5.5, "F": 0,
