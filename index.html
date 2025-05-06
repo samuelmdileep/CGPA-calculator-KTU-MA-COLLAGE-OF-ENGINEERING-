@@ -5,6 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MA College of Engineering - SCGPA & CGPA Calculator</title>
   <style>
+    .syllabus-btn {
+  display: inline-block;
+  padding: 12px 24px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  margin-top: 20px;
+  text-align: center;
+}
+.syllabus-btn:hover {
+  background-color: #0056b3;
+}
+
     body {
       font-family: 'Segoe UI', sans-serif;
       background: #f2f7ff url('https://www.mace.ac.in/images/logo-footer.png') no-repeat center center;
@@ -130,8 +145,9 @@
     <div class="result" id="totalCGPResult"></div>
     <button class="calc-btn" onclick="printSummary()">🖨️ Print Summary</button>
 
+    <a href="syllabus.html" class="syllabus-btn">📘 View Syllabus</a>
 
-    <button class="syllabus-btn" onclick="viewSyllabus()">📘 View Syllabus</button>
+    
 
     <div class="footer-logo">
       <img src="https://www.mace.ac.in/images/logo-footer.png" alt="MACE" />
@@ -318,9 +334,7 @@
 }
 
 
-    function viewSyllabus() {
-      window.open("https://www.mace.ac.in/academics/syllabus", "_blank");
-    }
+    
 
     function saveSubjectsToStorage() {
       localStorage.setItem("subjectCount", subjectCount);
