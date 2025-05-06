@@ -156,6 +156,31 @@
   </div>
 
   <script>
+     // Function to save data to localStorage
+    function saveToLocalStorage() {
+      var gradeInput = document.getElementById('gradeInput').value;
+      var creditInput = document.getElementById('creditInput').value;
+
+      // Save them to localStorage with specific keys
+      localStorage.setItem('grade', gradeInput);
+      localStorage.setItem('credit', creditInput);
+    }
+
+    // Function to load data from localStorage
+    function loadFromLocalStorage() {
+      var savedGrade = localStorage.getItem('grade');
+      var savedCredit = localStorage.getItem('credit');
+      
+      if (savedGrade) {
+        document.getElementById('gradeInput').value = savedGrade;
+      }
+      if (savedCredit) {
+        document.getElementById('creditInput').value = savedCredit;
+      }
+    }
+
+    // Call the function to load data when the page is loaded
+    window.onload = loadFromLocalStorage;
     const gradePoints = {
       "S": 10, "A+": 9, "A": 8.5, "B+": 8, "B": 7.5,
       "C+": 7, "C": 6.5, "D": 6, "P": 5.5, "F": 0,
