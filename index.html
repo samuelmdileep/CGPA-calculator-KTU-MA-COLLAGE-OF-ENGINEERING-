@@ -179,7 +179,6 @@
 }
 
 function loadInputsFromLocalStorage() {
-  
   const savedData = JSON.parse(localStorage.getItem("subjectData"));
   const container = document.getElementById("subject-container");
 
@@ -194,7 +193,6 @@ function loadInputsFromLocalStorage() {
     }
     return;
   }
-  
 
   // Load saved data rows
   for (let i = 0; i < savedData.length; i++) {
@@ -429,9 +427,38 @@ window.onload = () => {
   win.focus();
   win.print();
 }
-  </script>
 
-  
+    function saveSubjectsToStorage() {
+      localStorage.setItem("subjectCount", subjectCount);
+    }
+
+    function loadSubjectsFromStorage() {
+  const imported = JSON.parse(localStorage.getItem('importedSubjects'));
+
+  if (imported && imported.length > 0) {
+    // Clear existing subject container
+    document.getElementById("subjects").innerHTML = "";
+    subjectCount = 0;
+
+    // Loop and create rows using existing function
+    imported.forEach(subject => {
+      createSubjectRow(subject.title, subject.credit); // Pass title & credit
+      subjectCount++;
+    });
+
+    saveSubjectsToStorage();
+    localStorage.removeItem("importedSubjects"); // optional: clear after use
+  } else {
+    // Default fallback to empty rows
+    const count = parseInt(localStorage.getItem("subjectCount")) || 6;
+    for (let i = 0; i < count; i++) {
+      createSubjectRow(); // create empty rows
+    }
+    subjectCount = count;
+    saveSubjectsToStorage();
+  }
+}
+  </script>
 </body>
 </html>
 
