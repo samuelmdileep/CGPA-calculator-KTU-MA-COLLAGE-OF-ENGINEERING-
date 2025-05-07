@@ -69,11 +69,12 @@
     }
 
     .grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 15px;
-      margin-bottom: 15px;
-    }
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
 
     input, select, button {
       padding: 10px;
@@ -144,8 +145,7 @@
 
     <div class="result" id="totalCGPResult"></div>
     <button class="calc-btn" onclick="printSummary()">🖨️ Print Summary</button>
-
-    <button onclick="location.href='syllabus.html'" class="syllabus-btn">📘 View Syllabus</button>
+    <a href="syllabus.html" class="syllabus-btn">📘 View Syllabus</a>
 
 
     
@@ -156,31 +156,6 @@
   </div>
 
   <script>
-     // Function to save data to localStorage
-    function saveToLocalStorage() {
-      var gradeInput = document.getElementById('gradeInput').value;
-      var creditInput = document.getElementById('creditInput').value;
-
-      // Save them to localStorage with specific keys
-      localStorage.setItem('grade', gradeInput);
-      localStorage.setItem('credit', creditInput);
-    }
-
-    // Function to load data from localStorage
-    function loadFromLocalStorage() {
-      var savedGrade = localStorage.getItem('grade');
-      var savedCredit = localStorage.getItem('credit');
-      
-      if (savedGrade) {
-        document.getElementById('gradeInput').value = savedGrade;
-      }
-      if (savedCredit) {
-        document.getElementById('creditInput').value = savedCredit;
-      }
-    }
-
-    // Call the function to load data when the page is loaded
-    window.onload = loadFromLocalStorage;
     const gradePoints = {
       "S": 10, "A+": 9, "A": 8.5, "B+": 8, "B": 7.5,
       "C+": 7, "C": 6.5, "D": 6, "P": 5.5, "F": 0,
@@ -189,10 +164,79 @@
 
     let subjectCount = 0;
 
+    function saveInputsToLocalStorage() {
+  const rows = document.getElementsByClassName("grid");
+  const data = [];
+
+  for (let i = 0; i < rows.length; i++) {
+    const subject = rows[i].children[0].value;
+    const grade = rows[i].children[1].value;
+    const credit = rows[i].children[2].value;
+    data.push({ subject, grade, credit });
+  }
+
+  localStorage.setItem("subjectData", JSON.stringify(data));
+}
+
+function loadInputsFromLocalStorage() {
+  
+  const savedData = JSON.parse(localStorage.getItem("subjectData"));
+  const container = document.getElementById("subject-container");
+
+  container.innerHTML = ""; // Clear all existing rows
+  subjectCount = 0;
+
+  if (!savedData || savedData.length === 0) {
+    // No saved data, load 6 blank rows
+    for (let i = 0; i < 6; i++) {
+      createSubjectRow();
+      subjectCount++;
+    }
+    return;
+  }
+  
+
+  // Load saved data rows
+  for (let i = 0; i < savedData.length; i++) {
+    createSubjectRow();
+    subjectCount++;
+  }
+
+  // Fill saved values
+  const rows = document.getElementsByClassName("grid");
+  for (let i = 0; i < savedData.length; i++) {
+    rows[i].children[0].value = savedData[i].subject;
+    rows[i].children[1].value = savedData[i].grade;
+    rows[i].children[2].value = savedData[i].credit;
+  }
+
+  // Add blank rows if less than 6
+  while (subjectCount < 6) {
+    createSubjectRow();
+    subjectCount++;
+  }
+}
+
+
+document.addEventListener("input", () => {
+  if (!window._isClearing) saveInputsToLocalStorage();
+});
+
+window.onload = () => {
+  loadInputsFromLocalStorage();
+};
+
+
     function createSubjectRow() {
       const container = document.getElementById("subject-container");
       const row = document.createElement("div");
       row.className = "grid";
+
+      // Subject name input
+  const subjectNameInput = document.createElement("input");
+  subjectNameInput.type = "text";
+  subjectNameInput.placeholder = "Subject name";
+  subjectNameInput.classList.add("subject-input");
 
       const gradeSelect = document.createElement("select");
       for (const grade in gradePoints) {
@@ -206,7 +250,7 @@
       const creditInput = document.createElement("input");
       creditInput.type = "number";
       creditInput.classList.add("dim-input");
-      creditInput.placeholder = "Enter the credit";
+      creditInput.placeholder = "Enter credit";
       creditInput.readOnly = true;
 
       creditInput.addEventListener("focus", function () {
@@ -214,7 +258,7 @@
         this.classList.remove("dim-input");
         this.placeholder = "Eg: 3";
       });
-
+      row.appendChild(subjectNameInput); // 🔼 Add subject input first
       row.appendChild(gradeSelect);
       row.appendChild(creditInput);
       container.appendChild(row);
@@ -235,8 +279,8 @@
       let totalCredits = 0, totalPoints = 0;
 
       for (let row of rows) {
-        const grade = row.children[0].value;
-        const credits = parseFloat(row.children[1].value);
+        const grade = row.children[1].value;
+        const credits = parseFloat(row.children[2].value);
         if (isNaN(credits)) continue;
         totalCredits += credits;
         totalPoints += gradePoints[grade] * credits;
@@ -287,13 +331,19 @@
     }
 
     function clearSCGPAFields() {
-      const rows = document.getElementsByClassName("grid");
-      for (let row of rows) {
-        row.children[0].value = "S";
-        row.children[1].value = "";
-      }
-      document.getElementById("scgpResult").textContent = "";
-    }
+  const container = document.getElementById("subject-container");
+  container.innerHTML = ""; // Remove all current rows
+  subjectCount = 0; // Reset the count
+
+  // Add 6 fresh subject rows
+  for (let i = 0; i < 6; i++) {
+    addSubject();
+  }
+
+  document.getElementById("scgpResult").textContent = "";
+  localStorage.removeItem("subjectData"); // Optional: Clear stored data too
+}
+
 
     function clearCGPAFields() {
       const inputs = document.getElementsByClassName("scgp-value");
@@ -306,6 +356,9 @@
   const win = window.open('', '', 'height=800,width=1000');
   const logoURL = "https://www.mace.ac.in/images/logo-footer.png";
   const rows = document.getElementsByClassName("grid");
+  const scgpa = localStorage.getItem("scgpResult") || "-";
+  const cgpa = localStorage.getItem("totalCGPA") || "-";
+  const percentage = (cgpa !== "-") ? (cgpa * 10).toFixed(2) + "%" : "-";
 
   let table = `<h2 style="text-align:center;color:#003366;">SCGPA Summary</h2>`;
   table += `<table style="width:100%;border-collapse:collapse;font-family:'Segoe UI';font-size:16px;margin:auto;">
@@ -314,67 +367,73 @@
                 <th style="padding:10px;border:1px solid #ccc;">Grade</th>
                 <th style="padding:10px;border:1px solid #ccc;">Credit</th>
               </tr>`;
-  
+
   for (let i = 0; i < rows.length; i++) {
-    const grade = rows[i].children[0].value;
-    const credit = rows[i].children[1].value || "-";
+    const subject = rows[i].children[0].value || `Subject ${i + 1}`;
+    const grade = rows[i].children[1].value;
+    const credit = rows[i].children[2].value || "-";
+    
+    // Skip if credit is empty or not a valid number
+    if (!credit || isNaN(parseFloat(credit))) continue;
+
     table += `<tr>
-                <td style="padding:8px;border:1px solid #ccc;text-align:center;">Subject ${i + 1}</td>
+                <td style="padding:8px;border:1px solid #ccc;text-align:center;">${subject}</td>
                 <td style="padding:8px;border:1px solid #ccc;text-align:center;">${grade}</td>
                 <td style="padding:8px;border:1px solid #ccc;text-align:center;">${credit}</td>
               </tr>`;
   }
 
-  const scgp = localStorage.getItem("scgpResult") || "-";
-  table += `<tr style="background:#f0f8ff;font-weight:bold;">
-              <td colspan="2" style="padding:10px;border:1px solid #ccc;text-align:right;">SCGPA</td>
-              <td style="padding:10px;border:1px solid #ccc;text-align:center;">${scgp}</td>
-            </tr>`;
-  table += `</table>`;
-
-  const footer = `<p style="text-align:center;font-size:13px;margin-top:30px;color:#555;"></p>`;
+  table += `</table><br/>`;
+  table += `<p style="font-size:18px;text-align:center;margin-top:20px;color:#003366;"><strong>SCGPA:</strong> ${scgpa}</p>`;
+  table += `<p style="font-size:18px;text-align:center;color:#003366;"><strong>CGPA:</strong> ${cgpa} &nbsp;&nbsp; <strong>Percentage:</strong> ${percentage}</p>`;
 
   win.document.write(`
     <html>
     <head>
-      <title>SCGPA Summary</title>
+      <title>Print Summary - MACE</title>
       <style>
         body {
-          background: url('${logoURL}') no-repeat center center;
-          background-size: 200px;
-          background-attachment: fixed;
-          opacity: 1.5;
+          font-family: 'Segoe UI', sans-serif;
+          position: relative;
           padding: 50px;
+        }
+        .watermark {
+          position: fixed;
+          top: 40%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          opacity: 0.1;
+          z-index: 0;
+        }
+        .footer {
+          margin-top: 40px;
+          text-align: center;
+          font-size: 12px;
+          color: #555;
         }
       </style>
     </head>
     <body>
+      <div class="watermark">
+        <img src="${logoURL}" style="width:300px;" />
+      </div>
       ${table}
-      ${footer}
+      <div class="footer">
+        Downloaded from <a href="https://samuelmdileep.github.io/CGPA-calculator-KTU-MA-COLLAGE-OF-ENGINEERING-/" target="_blank">
+        samuelmdileep.github.io/CGPA-calculator</a>
+      </div>
     </body>
     </html>
   `);
-
   win.document.close();
+  win.focus();
   win.print();
 }
-
-
-    
-
-    function saveSubjectsToStorage() {
-      localStorage.setItem("subjectCount", subjectCount);
-    }
-
-    function loadSubjectsFromStorage() {
-      const count = parseInt(localStorage.getItem("subjectCount")) || 6;
-      for (let i = 0; i < count; i++) {
-        createSubjectRow();
-      }
-      subjectCount = count;
-    }
-
-    loadSubjectsFromStorage();
   </script>
+
+  
 </body>
 </html>
+
+
+  
