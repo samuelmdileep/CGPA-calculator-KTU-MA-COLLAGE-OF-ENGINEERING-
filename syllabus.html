@@ -5,12 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MA College of Engineering - SCGPA & CGPA Calculator</title>
   <style>
-.back-section {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 50px;
-}
 
 .back-btn {
   background-color: #2fff00;
@@ -26,12 +20,7 @@
 
 .back-btn:hover {
   background-color: #2fff00;
-
-  
-  
 }
-
-
     body {
       font-family: 'Segoe UI', sans-serif;
       background: #f2f7ff;
@@ -92,6 +81,14 @@
     .syllabus-btn:hover {
       background-color: #0059b3;
     }
+    .import-btn{
+      background-color: #ff01e6;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+      margin: 10px 0;
+    }
 
     .syllabus-table {
       width: 100%;
@@ -124,7 +121,7 @@
     <img src="https://www.mace.ac.in/images/logo-footer.png" class="logo" alt="MACE Logo" />
     <h1>MA College of Engineering - SCGPA & CGPA Calculator<br>(Autonomous Batch)</h1>
     <div class="back-btn-container">
-      <button onclick="location.href='index.html'" class="back-btn">
+      <button onclick="location.href='check.html'" class="back-btn">
         🔙 Back to CGPA Calculator
       </button>
     </div>
@@ -218,7 +215,11 @@
               <th>22</th>
           </tr>
           </table>
-        </div>
+       
+        <div style="text-align:center; margin-top: 10px;">
+          <button onclick="importToCalculator('S1')" class="import-btn">📥 Import to Calculator</button>
+        </div>  
+      </div>      
         
         
         <div id="S2" class="syllabus-section">
@@ -275,23 +276,17 @@
             <tr>
               <td>8</td>
               <td>B24PH1L01A</td>
-              <td>Engineering Physics Lab (A)</td>
+              <td>Engineering Physics and chemestry Lab (A)</td>
               <td>1</td>
             </tr>
             <tr>
               <td>9</td>
-              <td>B24CY1L01A</td>
-              <td>Engineering Chemistry Lab (A)</td>
-              <td>1</td>
-            </tr>
-            <tr>
-              <td>10</td>
               <td>B24MC1T03</td>
               <td>Professional Communication and Ethics</td>
               <td>P/F</td>
             </tr>
             <tr>
-              <td>11</td>
+              <td>10</td>
               <td>B24MC1L02</td>
               <td>Idea Lab</td>
               <td>P/F</td>
@@ -301,7 +296,12 @@
               <th>21</th>
           </tr>
       </table>
+    
+    <div style="text-align:center; margin-top: 10px;">
+      <button onclick="importToCalculator('S2')" class="import-btn">📥 Import to Calculator</button>
     </div>
+  </div>
+    
    
     
     <div id="S3" class="syllabus-section">
@@ -378,7 +378,13 @@
             <th>22</th>
         </tr>
     </table>
+    
+    <div style="text-align:center; margin-top: 10px;">
+      <button onclick="importToCalculator('S3')" class="import-btn">📥 Import to Calculator</button>
     </div>
+  </div>
+    
+
     <div id="S4" class="syllabus-section">
       <h2>Semester 4 Syllabus</h2>
       <table class="syllabus-table">
@@ -453,7 +459,12 @@
             <th>25</th>
         </tr>
     </table>
+    
+    <div style="text-align:center; margin-top: 10px;">
+      <button onclick="importToCalculator('S4')" class="import-btn">📥 Import to Calculator</button>
     </div>
+  </div>
+    
 
     <div id="S5" class="syllabus-section">
       <h2>Semester 5 Syllabus</h2>
@@ -529,7 +540,12 @@
             <th>26</th>
         </tr>
     </table>
+    
+    <div style="text-align:center; margin-top: 10px;">
+      <button onclick="importToCalculator('S5')" class="import-btn">📥 Import to Calculator</button>
     </div>
+  </div>
+    
     
     <div id="S6" class="syllabus-section">
       <h2>Semester 6 Syllabus</h2>
@@ -605,7 +621,12 @@
             <th>26</th>
         </tr>
     </table>
+   
+    <div style="text-align:center; margin-top: 10px;">
+      <button onclick="importToCalculator('S6')" class="import-btn">📥 Import to Calculator</button>
     </div>
+  </div>
+    
 
      <div id="S7" class="syllabus-section">
       <h2>Semester 7 Syllabus</h2>
@@ -686,7 +707,12 @@
             <th>23</th>
         </tr>
     </table>
-     </div>
+     
+     <div style="text-align:center; margin-top: 10px;">
+      <button onclick="importToCalculator('S7')" class="import-btn">📥 Import to Calculator</button>
+    </div>
+  </div>
+    
 
     <div id="S8" class="syllabus-section">
       <h2>Semester 8 Syllabus</h2>
@@ -756,7 +782,66 @@
             <th>15</th>
         </tr>
     </table>
+    
+    <div style="text-align:center; margin-top: 10px;">
+      <button onclick="importToCalculator('S8')" class="import-btn">📥 Import to Calculator</button>
     </div>
+  </div>
+  
+ <!-- Modal HTML (place at the end of the body) -->
+<div id="popupModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9999; opacity:0; transition:opacity 0.3s;">
+  <div style="
+    background:#f9f9f9; 
+    padding:30px 40px; 
+    border-radius:12px; 
+    width:500px; 
+    max-width:90%; 
+    margin:8% auto; 
+    text-align:center; 
+    box-shadow:0 8px 20px rgba(0,0,0,0.25); 
+    transform:scale(0.9); 
+    transition: transform 0.3s, opacity 0.3s;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  ">
+    <h2 style="margin-bottom:20px; color:#333;">Choose Your Semester 8 Option</h2>
+
+    <div style="text-align:left; font-size:17px; color:#444;">
+      <label style="display:block; margin-bottom:12px;">
+        <input type="radio" name="selection" value="internship" style="transform: scale(1.2); margin-right:10px;">
+        Internship & MOOC (9 Credits)
+      </label>
+      <label style="display:block; margin-bottom:20px;">
+        <input type="radio" name="selection" value="electives" style="transform: scale(1.2); margin-right:10px;">
+        Program Electives (3 Courses)
+      </label>
+    </div>
+
+    <div style="margin-top:25px;">
+      <button onclick="confirmSelection()" style="
+        background:linear-gradient(to right, #0f9d58, #34a853); 
+        color:white; 
+        padding:12px 25px; 
+        font-size:16px; 
+        border:none; 
+        border-radius:6px; 
+        cursor:pointer; 
+        margin-right:10px;
+        transition: background 0.3s;
+      ">✅ Confirm</button>
+
+      <button onclick="closePopup()" style="
+        background:linear-gradient(to right, #d93025, #ea4335); 
+        color:white; 
+        padding:12px 25px; 
+        font-size:16px; 
+        border:none; 
+        border-radius:6px; 
+        cursor:pointer;
+        transition: background 0.3s;
+      ">❌ Cancel</button>
+    </div>
+  </div>
+</div>
 
     <!-- Repeat for S3 to S8 -->
 
@@ -764,19 +849,118 @@
       <img src="https://www.mace.ac.in/images/logo-footer.png" alt="MACE" />
     </div>
   </div>
-
   <script>
-    function showSyllabus(semester) {
+    function showSyllabus(id) {
       // Hide all syllabus sections
-      const sections = document.getElementsByClassName('syllabus-section');
-      for (let section of sections) {
+      document.querySelectorAll('.syllabus-section').forEach(section => {
         section.classList.remove('show');
+      });
+      // Show the selected section
+      document.getElementById(id).classList.add('show');
+    }
+  
+   
+
+</script>
+<script>
+  function showSyllabus(id) {
+    document.querySelectorAll(".syllabus-section").forEach(sec => sec.classList.remove("show"));
+    document.getElementById(id).classList.add("show");
+  }
+</script>
+<script>
+  function showSyllabus(id) {
+    document.querySelectorAll(".syllabus-section").forEach(sec => sec.classList.remove("show"));
+    document.getElementById(id).classList.add("show");
+  }
+
+  function importToCalculator(semesterId) {
+    if (semesterId === 'S8') {
+      // Show the popup with animation
+      document.getElementById('popupModal').style.display = 'block';
+      setTimeout(() => {
+        document.getElementById('popupModal').style.opacity = '1';
+        document.getElementById('popupModal').querySelector('div').style.transform = 'scale(1)';
+      }, 10);
+
+      // Store semester ID globally for use in confirmSelection
+      window.selectedSemester = semesterId;
+    } else {
+      // For other semesters, directly collect data
+      const section = document.getElementById(semesterId);
+      const table = section.querySelector("table");
+      const rows = table.querySelectorAll("tr");
+      const subjects = [];
+
+      for (let i = 1; i < rows.length - 1; i++) {
+        const cells = rows[i].querySelectorAll("td");
+        if (cells.length === 4) {
+          const subject = cells[2].textContent.trim();
+          const credit = cells[3].textContent.trim();
+
+          if (/honor|minor/i.test(subject)) continue;
+
+          if (!isNaN(parseFloat(credit))) {
+            subjects.push({
+              subject: subject,
+              grade: "s",
+              credit: credit
+            });
+          }
+        }
       }
 
-      // Show the selected syllabus
-      const selectedSection = document.getElementById(semester);
-      selectedSection.classList.add('show');
+      // Save with expiry
+      const expiryTime = new Date().getTime() + 1 * 60 * 1000;
+      localStorage.setItem("subjectData", JSON.stringify(subjects));
+      localStorage.setItem("subjectDataExpiry", expiryTime.toString());
+
+      window.location.href = "index.html";
     }
-  </script>
+  }
+
+  function confirmSelection() {
+    const selectedOption = document.querySelector('input[name="selection"]:checked');
+    if (!selectedOption) {
+      alert("Please select an option!");
+      return;
+    }
+
+    const selection = selectedOption.value;
+    const subjects = [];
+
+    if (selection === "internship") {
+      subjects.push({
+        subject: "Internship & MOOC Courses",
+        grade: "s",
+        credit: "9"
+      });
+    } else if (selection === "electives") {
+      subjects.push({ subject: "Programme Elective V", grade: "s", credit: "3" });
+      subjects.push({ subject: "Programme Elective VI", grade: "s", credit: "3" });
+      subjects.push({ subject: "Open Elective III", grade: "s", credit: "3" });
+    }
+
+    // Common for both selections
+    subjects.push({ subject: "PROJECT PHASE II", grade: "s", credit: "6" });
+
+    const expiryTime = new Date().getTime() + 1 * 60 * 1000;
+    localStorage.setItem("subjectData", JSON.stringify(subjects));
+    localStorage.setItem("subjectDataExpiry", expiryTime.toString());
+
+    closePopup();
+    window.location.href = "index.html";
+  }
+
+  function closePopup() {
+    // Apply fade-out effect before closing
+    const popup = document.getElementById('popupModal');
+    popup.style.opacity = '0';
+    setTimeout(() => {
+      popup.style.display = 'none';
+    }, 300); // Match the fade-out duration
+  }
+</script>
+
 </body>
 </html>
