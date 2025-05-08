@@ -6,26 +6,26 @@
   <title>MA College of Engineering - SCGPA & CGPA Calculator</title>
   <style>
     .syllabus-btn {
-  display: inline-block;
-  padding: 12px 24px;
-  background-color: #007bff;
-  color: white;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: bold;
-  margin-top: 20px;
-  text-align: center;
-}
-.syllabus-btn:hover {
-  background-color: #0056b3;
-}
+     display: inline-block;
+     padding: 12px 24px;
+     background-color: #007bff;
+     color: white;
+     border-radius: 8px;
+     text-decoration: none;
+     font-weight: bold;
+     margin-top: 20px;
+     text-align: center;
+    }
+    .syllabus-btn:hover {
+       background-color: #0056b3;
+    }
 
     body {
       font-family: 'Segoe UI', sans-serif;
       background: #f2f7ff url('https://www.mace.ac.in/images/logo-footer.png') no-repeat center center;
-      background-size: 300px;
+      background-size: 400px;
       background-attachment: fixed;
-      opacity: 0.98;
+      opacity: 0.96;
       margin: 0;
       padding: 20px;
     }
@@ -92,16 +92,26 @@
       background-color: #f9f9f9;
     }
 
-    .add-btn, .calc-btn, .clear-btn, .syllabus-btn {
+    .add-btn, .calc-btn {
       background-color: #004080;
       color: white;
       border: none;
       cursor: pointer;
       margin-right: 10px;
     }
-
-    .add-btn:hover, .calc-btn:hover, .clear-btn:hover, .syllabus-btn:hover {
-      background-color: #0059b3;
+    .syllabus-btn {
+      background-color: #3fef0f;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    .clear-btn {
+      background-color: #f61d1d;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-right: 10px;
     }
 
     .scgp-row {
@@ -129,7 +139,7 @@
 
     <button class="add-btn" onclick="addSubject()">+ Add Subject</button>
     <button class="calc-btn" onclick="calculateSCGPA()">Calculate SCGPA</button>
-    <button class="clear-btn" onclick="clearSCGPAFields()">Clear SCGPA</button>
+    
 
     <div class="result" id="scgpResult"></div>
 
@@ -141,12 +151,11 @@
     </div>
     <button class="add-btn" onclick="addSCGPField()">+ Add SCGPA</button>
     <button class="calc-btn" onclick="calculateTotalCGPA()">Calculate Total CGPA</button>
-    <button class="clear-btn" onclick="clearCGPAFields()">Clear CGPA</button>
-
+   
     <div class="result" id="totalCGPResult"></div>
     <button class="calc-btn" onclick="printSummary()">🖨️ Print Summary</button>
     <a href="syllabus.html" class="syllabus-btn">📘 View Syllabus</a>
-
+    <button class="clear-btn" onclick="clearSCGPAFields()">CLEAR DATA</button>
 
     
 
@@ -177,41 +186,49 @@
 
   localStorage.setItem("subjectData", JSON.stringify(data));
 }
-
-function loadInputsFromLocalStorage() {
+function loadSubjects() {
+  const imported = JSON.parse(localStorage.getItem('importedSubjects'));
   const savedData = JSON.parse(localStorage.getItem("subjectData"));
   const container = document.getElementById("subject-container");
+  container.innerHTML = "";
+  let subjectCount = 0;
 
-  container.innerHTML = ""; // Clear all existing rows
-  subjectCount = 0;
+  // ✅ If imported syllabus exists
+  if (imported && imported.length > 0) {
+    // Clear all existing subject rows
+    container.innerHTML = "";
+    
+    // ✅ Create rows based on the imported syllabus (no padding to 6)
+    const filtered = imported.filter(subject => {
+      const title = subject.title.toLowerCase();
+      return !title.includes("honor") && !title.includes("minor");
+    });
 
-  if (!savedData || savedData.length === 0) {
-    // No saved data, load 6 blank rows
-    for (let i = 0; i < 6; i++) {
+    filtered.forEach(subject => {
+      createSubjectRow(subject.title, subject.credit, "S");
+      subjectCount++;
+    });
+
+    // Remove the imported syllabus from localStorage after usage
+    localStorage.removeItem("importedSubjects");
+
+    localStorage.setItem("subjectCount", subjectCount); // Save actual imported count
+  } 
+  // ✅ If saved data exists (when no syllabus is imported)
+  else if (savedData && savedData.length > 0) {
+    savedData.forEach(item => {
+      createSubjectRow(item.subject, item.credit, item.grade);
+      subjectCount++;
+    });
+
+    localStorage.setItem("subjectCount", subjectCount);
+  } 
+  // ✅ No data at all
+  else {
+    while (subjectCount < 6) {
       createSubjectRow();
       subjectCount++;
     }
-    return;
-  }
-
-  // Load saved data rows
-  for (let i = 0; i < savedData.length; i++) {
-    createSubjectRow();
-    subjectCount++;
-  }
-
-  // Fill saved values
-  const rows = document.getElementsByClassName("grid");
-  for (let i = 0; i < savedData.length; i++) {
-    rows[i].children[0].value = savedData[i].subject;
-    rows[i].children[1].value = savedData[i].grade;
-    rows[i].children[2].value = savedData[i].credit;
-  }
-
-  // Add blank rows if less than 6
-  while (subjectCount < 6) {
-    createSubjectRow();
-    subjectCount++;
   }
 }
 
@@ -221,48 +238,51 @@ document.addEventListener("input", () => {
 });
 
 window.onload = () => {
-  loadInputsFromLocalStorage();
+  loadSubjects();
 };
 
 
-    function createSubjectRow() {
-      const container = document.getElementById("subject-container");
-      const row = document.createElement("div");
-      row.className = "grid";
 
-      // Subject name input
+function createSubjectRow(title = "", credit = "", grade = "S") {
+  const container = document.getElementById("subject-container");
+  const row = document.createElement("div");
+  row.className = "grid";
+
   const subjectNameInput = document.createElement("input");
   subjectNameInput.type = "text";
   subjectNameInput.placeholder = "Subject name";
   subjectNameInput.classList.add("subject-input");
+  subjectNameInput.value = title;
 
-      const gradeSelect = document.createElement("select");
-      for (const grade in gradePoints) {
-        const option = document.createElement("option");
-        option.value = grade;
-        option.textContent = grade;
-        grade === "S" && (option.selected = true);
-        gradeSelect.appendChild(option);
-      }
+  const gradeSelect = document.createElement("select");
+  for (const g in gradePoints) {
+    const option = document.createElement("option");
+    option.value = g;
+    option.textContent = g;
+    if (g === grade) option.selected = true;
+    gradeSelect.appendChild(option);
+  }
 
-      const creditInput = document.createElement("input");
-      creditInput.type = "number";
-      creditInput.classList.add("dim-input");
-      creditInput.placeholder = "Enter credit";
-      creditInput.readOnly = true;
+  const creditInput = document.createElement("input");
+  creditInput.type = "number";
+  creditInput.classList.add("dim-input");
+  creditInput.placeholder = "Enter credit";
+  creditInput.readOnly = true;
+  creditInput.value = credit;
 
-      creditInput.addEventListener("focus", function () {
-        this.readOnly = false;
-        this.classList.remove("dim-input");
-        this.placeholder = "Eg: 3";
-      });
-      row.appendChild(subjectNameInput); // 🔼 Add subject input first
-      row.appendChild(gradeSelect);
-      row.appendChild(creditInput);
-      container.appendChild(row);
-    }
+  creditInput.addEventListener("focus", function () {
+    this.readOnly = false;
+    this.classList.remove("dim-input");
+    this.placeholder = "Eg: 3";
+  });
 
-    function addSubject() {
+  row.appendChild(subjectNameInput);
+  row.appendChild(gradeSelect);
+  row.appendChild(creditInput);
+  container.appendChild(row);
+}
+
+function addSubject() {
       if (subjectCount < 10) {
         createSubjectRow();
         subjectCount++;
@@ -329,27 +349,66 @@ window.onload = () => {
     }
 
     function clearSCGPAFields() {
-  const container = document.getElementById("subject-container");
-  container.innerHTML = ""; // Remove all current rows
-  subjectCount = 0; // Reset the count
+  window._isClearing = true; // Prevent saving during clear
 
-  // Add 6 fresh subject rows
-  for (let i = 0; i < 6; i++) {
-    addSubject();
+  const container = document.getElementById("subject-container");
+  const rows = document.getElementsByClassName("grid");
+
+  // Clear the fields for all current rows
+  for (let row of rows) {
+    row.children[0].value = ""; // Clear subject field
+    row.children[1].value = "S"; // Set grade to 'S' (default)
+    row.children[2].value = ""; // Clear credit field
+    row.children[2].readOnly = false; // Allow editing of credit field
+    row.children[2].classList.remove("dim-input"); // Remove dim style from credit field
+    row.children[2].placeholder = "Enter credit"; // Reset placeholder
   }
 
+  // Reset the SCGPA result text
   document.getElementById("scgpResult").textContent = "";
-  localStorage.removeItem("subjectData"); // Optional: Clear stored data too
+
+  // Clear stored data in localStorage
+  localStorage.removeItem("subjectData");
+  localStorage.removeItem("scgpResult");
+
+  // Ensure 6 rows are always present
+  const currentRowCount = rows.length;
+  if (currentRowCount > 6) {
+    // If more than 6 rows, remove extra rows
+    for (let i = currentRowCount - 1; i >= 6; i--) {
+      rows[i].remove();
+    }
+  } else if (currentRowCount < 6) {
+    // If fewer than 6 rows, create the missing rows
+    while (rows.length < 6) {
+      createSubjectRow();
+    }
+  }
+
+  // Set the number of subjects
+  localStorage.setItem("subjectCount", 6);
+
+  window._isClearing = false; // Allow saving again
+  clearCGPAFields()
 }
 
 
-    function clearCGPAFields() {
-      const inputs = document.getElementsByClassName("scgp-value");
-      for (let input of inputs) {
-        input.value = "";
-      }
-      document.getElementById("totalCGPResult").textContent = "";
-    }
+function clearCGPAFields() {
+  const container = document.getElementById("scgpInputs");
+  
+  // Clear all existing SCGP input rows
+  container.innerHTML = '';
+
+  // Add back one default row for SCGP input
+  addSCGPField(); 
+
+  // Clear the total CGPA result
+  document.getElementById("totalCGPResult").textContent = "";
+
+  // Remove the total CGPA from localStorage
+  localStorage.removeItem("totalCGPA");
+}
+
     function printSummary() {
   const win = window.open('', '', 'height=800,width=1000');
   const logoURL = "https://www.mace.ac.in/images/logo-footer.png";
@@ -427,38 +486,8 @@ window.onload = () => {
   win.focus();
   win.print();
 }
-
-    function saveSubjectsToStorage() {
-      localStorage.setItem("subjectCount", subjectCount);
-    }
-
-    function loadSubjectsFromStorage() {
-  const imported = JSON.parse(localStorage.getItem('importedSubjects'));
-
-  if (imported && imported.length > 0) {
-    // Clear existing subject container
-    document.getElementById("subjects").innerHTML = "";
-    subjectCount = 0;
-
-    // Loop and create rows using existing function
-    imported.forEach(subject => {
-      createSubjectRow(subject.title, subject.credit); // Pass title & credit
-      subjectCount++;
-    });
-
-    saveSubjectsToStorage();
-    localStorage.removeItem("importedSubjects"); // optional: clear after use
-  } else {
-    // Default fallback to empty rows
-    const count = parseInt(localStorage.getItem("subjectCount")) || 6;
-    for (let i = 0; i < count; i++) {
-      createSubjectRow(); // create empty rows
-    }
-    subjectCount = count;
-    saveSubjectsToStorage();
-  }
-}
-  </script>
+ 
+</script>
 </body>
 </html>
 
