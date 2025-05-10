@@ -5,21 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MA College of Engineering - SCGPA & CGPA Calculator</title>
   <style>
-    .syllabus-btn {
-     display: inline-block;
-     padding: 12px 24px;
-     background-color: #007bff;
-     color: white;
-     border-radius: 8px;
-     text-decoration: none;
-     font-weight: bold;
-     margin-top: 20px;
-     text-align: center;
-    }
-    .syllabus-btn:hover {
-       background-color: #0056b3;
-    }
-
+    /* General Styling */
     body {
       font-family: 'Segoe UI', sans-serif;
       background: #f2f7ff url('https://www.mace.ac.in/images/logo-footer.png') no-repeat center center;
@@ -46,6 +32,52 @@
       margin: 0 auto 10px auto;
     }
 
+    h1 {
+      text-align: center;
+      color: #003366;
+      font-size: 24px;
+      margin-bottom: 30px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    input, select, button {
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    .add-btn, .calc-btn, .clear-btn, .syllabus-btn {
+      border: none;
+      cursor: pointer;
+      margin-right: 10px;
+      color: white;
+    }
+
+    .add-btn { background-color: #004080; }
+    .calc-btn { background-color: #004080; }
+    .clear-btn { background-color: #f61d1d; }
+    .syllabus-btn { background-color: #036c9d; padding: 12px 24px; text-decoration: none; font-weight: bold; border-radius: 8px; display: inline-block; }
+
+    .result {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #003366;
+    }
+
+    .scgp-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
     .footer-logo {
       position: absolute;
       right: 20px;
@@ -61,71 +93,91 @@
       width: 30px;
     }
 
-    h1 {
-      text-align: center;
-      color: #003366;
-      font-size: 24px;
-      margin-bottom: 30px;
-    }
-
-    .grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-  margin-bottom: 10px;
+    /* Grade Editor Popup */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(6px);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
+.popup {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  width: 400px; /* Adjusted width */
+  max-height: 80vh; /* Adjusted max-height to fit better */
+  overflow: hidden; /* Hide any overflow */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
 
-    input, select, button {
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
+.popup h2 {
+  text-align: center;
+  margin-bottom: 10px; /* Reduced margin */
+}
 
-    input::placeholder {
-      color: #bbb;
-    }
+#grade-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 15px; /* Reduced margin */
+}
 
-    .dim-input {
-      color: #aaa;
-      background-color: #f9f9f9;
-    }
+#grade-table th,
+#grade-table td {
+  padding: 8px; /* Reduced padding */
+  border: 1px solid #ddd;
+  text-align: center;
+}
 
-    .add-btn, .calc-btn {
-      background-color: #004080;
-      color: white;
-      border: none;
-      cursor: pointer;
-      margin-right: 10px;
-    }
-    .syllabus-btn {
-      background-color: #3fef0f;
-      color: white;
-      border: none;
-      cursor: pointer;
-      margin-right: 10px;
-    }
-    .clear-btn {
-      background-color: #f61d1d;
-      color: white;
-      border: none;
-      cursor: pointer;
-      margin-right: 10px;
-    }
+#grade-table input {
+  width: 60px; /* Reduced input width */
+  text-align: center;
+}
 
-    .scgp-row {
-      display: flex;
-      gap: 10px;
-      margin-top: 10px;
-    }
+.popup .btn-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+}
 
-    .result {
-      margin-top: 20px;
-      font-size: 18px;
-      font-weight: bold;
-      color: #003366;
-    }
+.popup button {
+  padding: 8px 12px; /* Reduced button padding */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.save-btn {
+  background-color: #17c12a;
+  color: white;
+}
+
+.reset-btn {
+  background-color: #f39c12;
+  color: white;
+}
+
+.close-btn {
+  background-color: #e74c3c;
+  color: white;
+  position: absolute;
+  right: 20px;
+  top: 20px;
+}
+
   </style>
 </head>
 <body>
@@ -133,14 +185,9 @@
     <img src="https://www.mace.ac.in/images/logo-footer.png" class="logo" alt="MACE Logo" />
     <h1>MA College of Engineering - SCGPA & CGPA Calculator<br>(Autonomous Batch)</h1>
 
-    <div id="subject-container">
-      <!-- Subjects added via JS -->
-    </div>
-
+    <div id="subject-container"></div>
     <button class="add-btn" onclick="addSubject()">+ Add Subject</button>
     <button class="calc-btn" onclick="calculateSCGPA()">Calculate SCGPA</button>
-    
-
     <div class="result" id="scgpResult"></div>
 
     <h3 style="margin-top: 40px;">Total CGPA Calculation</h3>
@@ -151,29 +198,107 @@
     </div>
     <button class="add-btn" onclick="addSCGPField()">+ Add SCGPA</button>
     <button class="calc-btn" onclick="calculateTotalCGPA()">Calculate Total CGPA</button>
-   
     <div class="result" id="totalCGPResult"></div>
+
     <button class="calc-btn" onclick="printSummary()">🖨️ Print Summary</button>
     <a href="syllabus.html" class="syllabus-btn">📘 View Syllabus</a>
     <button class="clear-btn" onclick="clearSCGPAFields()">CLEAR DATA</button>
+    <button class="add-btn" onclick="openGradeEditor()">Edit Grade Points</button>
 
-    
-
-    <div class="footer-logo">
-      <img src="https://www.mace.ac.in/images/logo-footer.png" alt="MACE" />
+    <!-- Grade Editor Overlay -->
+    <div class="overlay" id="gradeEditor">
+      <div class="popup">
+        <button class="close-btn" onclick="closeGradeEditor()">Cancel</button>
+        <h2>Edit Grade Points</h2>
+        <table id="grade-table">
+          <thead>
+            <tr><th>Grade</th><th>Grade Point</th></tr>
+          </thead>
+          <tbody id="grade-table-body"></tbody>
+        </table>
+        <div class="btn-container">
+          <button class="save-btn" onclick="saveGradePoints()">Save</button>
+          <button class="reset-btn" onclick="resetGradePoints()">Reset</button>
+        </div>
+      </div>
     </div>
   </div>
 
   <script>
-    const gradePoints = {
-      "S": 10, "A+": 9, "A": 8.5, "B+": 8, "B": 7.5,
-      "C+": 7, "C": 6.5, "D": 6, "P": 5.5, "F": 0,
-      "FE": 0, "I": 0, "AB": 0
-    };
+   const defaultGrades = {
+    "S": 10, "A+": 9, "A": 8.5, "B+": 8, "B": 7.5,
+    "C+": 7, "C": 6.5, "D": 6, "P": 5.5, "F": 0,
+    "FE": 0, "I": 0, "AB": 0
+};
 
-    let subjectCount = 0;
+// Get the custom grade points from localStorage, or default to predefined ones
+function getGradePoints() {
+    return JSON.parse(localStorage.getItem("customGradePoints")) || defaultGrades;
+}
 
-    function saveInputsToLocalStorage() {
+// Open the grade editor and display current grade points
+function openGradeEditor() {
+    const grades = getGradePoints();
+    const tbody = document.getElementById("grade-table-body");
+    tbody.innerHTML = ""; // Clear the existing rows
+
+    const editableGrades = ["S", "A+", "A", "B+", "B", "C+", "C", "D", "P", "F"];
+
+    // Loop through the grades, and only display those from "S" to "F"
+    for (const [grade, point] of Object.entries(grades)) {
+        if (editableGrades.includes(grade)) {
+            const value = point;
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td><strong>${grade}</strong></td>
+              <td><input type="number" id="grade-${grade}" value="${value}" step="0.1" /></td>
+            `;
+            tbody.appendChild(row);
+        }
+    }
+
+    document.getElementById("gradeEditor").style.display = "flex";
+}
+
+
+// Save the modified grade points into localStorage
+const editableGrades = ["S", "A+", "A", "B+", "B", "C+", "C", "D", "P", "F"];
+
+function saveGradePoints() {
+    const newGrades = {};
+
+    // Only loop through editable grades shown in the popup
+    for (const grade of editableGrades) {
+        const input = document.getElementById(`grade-${grade}`);
+        if (!input) continue; // skip if input doesn't exist
+        const val = parseFloat(input.value);
+        newGrades[grade] = isNaN(val) ? defaultGrades[grade] : val;
+    }
+
+    // Preserve uneditable grades (FE, AB, I) with default values
+    for (const grade of Object.keys(defaultGrades)) {
+        if (!editableGrades.includes(grade)) {
+            newGrades[grade] = defaultGrades[grade];
+        }
+    }
+
+    localStorage.setItem("customGradePoints", JSON.stringify(newGrades));
+    closeGradeEditor(); // ✅ This will now run correctly
+}
+
+// Reset grade points to default values
+function resetGradePoints() {
+    localStorage.removeItem("customGradePoints");
+    closeGradeEditor();
+}
+// Close the grade editor without saving
+function closeGradeEditor() {
+    document.getElementById("gradeEditor").style.display = "none";
+}
+
+
+  
+function saveInputsToLocalStorage() {
   const rows = document.getElementsByClassName("grid");
   const data = [];
 
@@ -248,39 +373,33 @@ function createSubjectRow(title = "", credit = "", grade = "S") {
   const row = document.createElement("div");
   row.className = "grid";
 
-  const subjectNameInput = document.createElement("input");
-  subjectNameInput.type = "text";
-  subjectNameInput.placeholder = "Subject name";
-  subjectNameInput.classList.add("subject-input");
-  subjectNameInput.value = title;
+  const subjectInput = document.createElement("input");
+  subjectInput.type = "text";
+  subjectInput.placeholder = "Subject";
+  subjectInput.value = title;
 
   const gradeSelect = document.createElement("select");
-  for (const g in gradePoints) {
+  const grades = Object.keys(getGradePoints());
+  grades.forEach(g => {
     const option = document.createElement("option");
     option.value = g;
     option.textContent = g;
     if (g === grade) option.selected = true;
     gradeSelect.appendChild(option);
-  }
+  });
 
   const creditInput = document.createElement("input");
   creditInput.type = "number";
-  creditInput.classList.add("dim-input");
-  creditInput.placeholder = "Enter credit";
-  creditInput.readOnly = true;
+  creditInput.placeholder = "Credit";
+  creditInput.step = "0.5";
   creditInput.value = credit;
 
-  creditInput.addEventListener("focus", function () {
-    this.readOnly = false;
-    this.classList.remove("dim-input");
-    this.placeholder = "Eg: 3";
-  });
-
-  row.appendChild(subjectNameInput);
+  row.appendChild(subjectInput);
   row.appendChild(gradeSelect);
   row.appendChild(creditInput);
   container.appendChild(row);
 }
+
 
 function addSubject() {
       if (subjectCount < 10) {
@@ -292,28 +411,33 @@ function addSubject() {
       }
     }
 
-    function calculateSCGPA() {
-      const rows = document.getElementsByClassName("grid");
-      let totalCredits = 0, totalPoints = 0;
+  function calculateSCGPA() {
+    const rows = document.getElementsByClassName("grid");
+    let totalCredits = 0, totalPoints = 0;
 
-      for (let row of rows) {
-        const grade = row.children[1].value;
-        const credits = parseFloat(row.children[2].value);
+    const gradePoints = getGradePoints(); // Get the custom or default grade points
+
+    for (let row of rows) {
+        const grade = row.children[1].value; // grade input in the second column
+        const credits = parseFloat(row.children[2].value); // credits input in the third column
+
         if (isNaN(credits)) continue;
+
+        // Use the custom grade points
         totalCredits += credits;
         totalPoints += gradePoints[grade] * credits;
-      }
-
-      const result = document.getElementById("scgpResult");
-      if (totalCredits > 0) {
-        const scgp = (totalPoints / totalCredits).toFixed(2);
-        result.textContent = `SCGP (Semester CGP): ${scgp}`;
-        localStorage.setItem("scgpResult", scgp);
-      } else {
-        result.textContent = "Enter valid credits.";
-      }
     }
 
+    const result = document.getElementById("scgpResult");  // Make sure to reference the correct ID
+
+    if (totalCredits > 0) {
+        const scgpa = (totalPoints / totalCredits).toFixed(2);
+        result.textContent = `SCGPA: ${scgpa}`;
+        localStorage.setItem("scgpaResult", scgpa);
+    } else {
+        result.textContent = "Enter valid credits.";
+    }
+}
     function addSCGPField() {
       const container = document.getElementById("scgpInputs");
       const row = document.createElement("div");
