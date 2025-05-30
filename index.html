@@ -528,7 +528,7 @@ function addSubject(subject = "", grade = "", credit = "") {
     <select>
       ${Object.keys(getGradePoints()).map(g => `<option ${grade === g ? 'selected' : ''}>${g}</option>`).join('')}
     </select>
-    <input type="number" step="0.5" placeholder="Credits" value="${credit}" />
+    <input type="number" step="0.5" placeholder="Enter credit" value="${credit}" />
   `;
 
   container.appendChild(div);
