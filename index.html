@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -203,7 +204,7 @@
     <div class="result" id="totalCGPResult"></div>
 
     <button class="calc-btn" onclick="printSummary()">🖨️ Print Summary</button>
-    <a href="syllabus.html" class="syllabus-btn">📘 View Syllabus</a>
+    <a href="departments.html" class="syllabus-btn">📘 View Syllabus</a>
     <button class="clear-btn" onclick="clearSCGPAFields()">CLEAR DATA</button>
     <button class="add-btn" onclick="openGradeEditor()">Edit Grade Points</button>
 
@@ -491,11 +492,11 @@ function addSubject() {
   }
 
   // Reset the SCGPA result text
-  document.getElementById("scgpResult").textContent = "";
+  
 
   // Clear stored data in localStorage
   localStorage.removeItem("subjectData");
-  localStorage.removeItem("scgpResult");
+  localStorage.removeItem("scgpaResult");
 
   // Ensure 6 rows are always present
   const currentRowCount = rows.length;
@@ -516,6 +517,8 @@ function addSubject() {
 
   window._isClearing = false; // Allow saving again
   clearCGPAFields()
+  localStorage.removeItem("scgpaResult");
+
 }
 function addSubject(subject = "", grade = "", credit = "") {
   const container = document.getElementById("subject-container");
@@ -528,7 +531,7 @@ function addSubject(subject = "", grade = "", credit = "") {
     <select>
       ${Object.keys(getGradePoints()).map(g => `<option ${grade === g ? 'selected' : ''}>${g}</option>`).join('')}
     </select>
-    <input type="number" step="0.5" placeholder="Credit" value="${credit}" />
+    <input type="number" step="0.5" placeholder="Credits" value="${credit}" />
   `;
 
   container.appendChild(div);
@@ -554,80 +557,177 @@ function clearCGPAFields() {
     function printSummary() {
   const win = window.open('', '', 'height=800,width=1000');
   const logoURL = "https://www.mace.ac.in/images/logo-footer.png";
+  const logoURL2="https://mace.ac.in/images/logo.png";
   const rows = document.getElementsByClassName("grid");
-  const scgpa = localStorage.getItem("scgpResult") || "-";
+  let scgpa = localStorage.getItem("scgpaResult");
+  if (!scgpa || scgpa === "null") scgpa = "-";
   const cgpa = localStorage.getItem("totalCGPA") || "-";
   const percentage = (cgpa !== "-") ? (cgpa * 10).toFixed(2) + "%" : "-";
 
-  let table = `<h2 style="text-align:center;color:#003366;">SCGPA Summary</h2>`;
-  table += `<table style="width:100%;border-collapse:collapse;font-family:'Segoe UI';font-size:16px;margin:auto;">
-              <tr style="background:#004080;color:white;">
-                <th style="padding:10px;border:1px solid #ccc;">Subject</th>
-                <th style="padding:10px;border:1px solid #ccc;">Grade</th>
-                <th style="padding:10px;border:1px solid #ccc;">Credit</th>
-              </tr>`;
+  let table = `
+    <table>
+      <thead>
+        <tr>
+          <th>Subject</th>
+          <th>Grade</th>
+          <th>Credit</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
 
   for (let i = 0; i < rows.length; i++) {
     const subject = rows[i].children[0].value || `Subject ${i + 1}`;
     const grade = rows[i].children[1].value;
     const credit = rows[i].children[2].value || "-";
     
-    // Skip if credit is empty or not a valid number
     if (!credit || isNaN(parseFloat(credit))) continue;
 
-    table += `<tr>
-                <td style="padding:8px;border:1px solid #ccc;text-align:center;">${subject}</td>
-                <td style="padding:8px;border:1px solid #ccc;text-align:center;">${grade}</td>
-                <td style="padding:8px;border:1px solid #ccc;text-align:center;">${credit}</td>
-              </tr>`;
+    table += `
+      <tr>
+        <td>${subject}</td>
+        <td>${grade}</td>
+        <td>${credit}</td>
+      </tr>
+    `;
   }
 
-  table += `</table><br/>`;
-  table += `<p style="font-size:18px;text-align:center;margin-top:20px;color:#003366;"><strong>SCGPA:</strong> ${scgpa}</p>`;
-  table += `<p style="font-size:18px;text-align:center;color:#003366;"><strong>CGPA:</strong> ${cgpa} &nbsp;&nbsp; <strong>Percentage:</strong> ${percentage}</p>`;
+  table += `
+      </tbody>
+    </table>
+  `;
+
+  if (!win) {
+    alert("Popup blocked. Please allow popups for this site.");
+    return;
+  }
 
   win.document.write(`
     <html>
     <head>
-      <title>Print Summary - MACE</title>
+      <title>SCGPA Summary - MACE</title>
       <style>
         body {
-          font-family: 'Segoe UI', sans-serif;
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          margin: 40px auto;
+          max-width: 900px;
+          color: #333;
+          background: #fff;
           position: relative;
-          padding: 50px;
         }
-        .watermark {
-          position: fixed;
-          top: 40%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          opacity: 0.1;
-          z-index: 0;
+        header {
+          display: flex;
+          align-items: center;
+          border-bottom: 2px solid #004080;
+          padding-bottom: 15px;
+          margin-bottom: 30px;
         }
-        .footer {
-          margin-top: 40px;
+        
+        header img {
+          height: 60px;
+          margin-right: 20px;
+        }
+        header h1 {
+          font-size: 1.8rem;
+          color: #004080;
+          margin: 0;
+          font-weight: 700;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-bottom: 30px;
+          font-size: 1rem;
+        }
+        th, td {
+          padding: 12px 15px;
+          border: 1px solid #ddd;
           text-align: center;
-          font-size: 12px;
-          color: #555;
         }
+        thead th {
+          background-color: #004080;
+          color: #fff;
+          font-weight: 600;
+        }
+        tbody tr:nth-child(even) {
+          background-color: #f3f6f9;
+        }
+        tbody tr:hover {
+          background-color: #d6e4f0;
+        }
+        .summary {
+          text-align: center;
+          font-size: 1.2rem;
+          color: #004080;
+          margin-bottom: 10px;
+          font-weight: 600;
+        }
+        footer {
+          text-align: center;
+          font-size: 0.85rem;
+          color: #777;
+          border-top: 1px solid #ddd;
+          padding-top: 10px;
+          margin-top: 40px;
+        }
+        footer a {
+          color: #004080;
+          text-decoration: none;
+          font-weight: 600;
+        }
+        footer a:hover {
+          text-decoration: underline;
+        }
+          
+        .watermark {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 700px;         
+  height: auto;
+  transform: translate(-50%, -50%);
+  opacity: 0.09;        /* subtle opacity */
+  z-index: -1;          /* behind all content */
+  pointer-events: none;
+  user-select: none;
+}
+  .watermark img {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  height: auto;
+      }
+
       </style>
     </head>
     <body>
+      <header>
+        <img src="${logoURL2}" alt="MACE Logo" />
+        <h1>SCGPA Summary</h1>
+      </header>
+
       <div class="watermark">
-        <img src="${logoURL}" style="width:300px;" />
+        <img src="${logoURL}" alt="Watermark Logo" />
       </div>
+
       ${table}
-      <div class="footer">
-        Downloaded from <a href="https://samuelmdileep.github.io/CGPA-calculator-KTU-MA-COLLAGE-OF-ENGINEERING-/" target="_blank">
+
+      <div class="summary"><strong>SCGPA:</strong> ${scgpa}</div>
+      <div class="summary"><strong>CGPA:</strong> ${cgpa} &nbsp;&nbsp; <strong>Percentage:</strong> ${percentage}</div>
+
+      <footer>
+        Downloaded from <a href="https://samuelmdileep.github.io/CGPA-calculator-KTU-MA-COLLAGE-OF-ENGINEERING-/" target="_blank" rel="noopener noreferrer">
         samuelmdileep.github.io/CGPA-calculator</a>
-      </div>
+      </footer>
     </body>
     </html>
   `);
+
   win.document.close();
   win.focus();
   win.print();
 }
+
  
 </script>
   
@@ -640,6 +740,17 @@ function clearCGPAFields() {
 
   gtag('config', 'G-82WVNK1L9G');
 </script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-82WVNK1L9G"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-82WVNK1L9G');
+</script>
+
 
 </body>
 </html>
