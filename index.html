@@ -277,6 +277,80 @@
 .close:hover {
   color: #ff0000;
 }
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  position: relative; /* Make grid a positioned container */
+}
+/* Button container inside grid */
+.about-button-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  padding: 10px;
+  grid-column: -1;
+  grid-row: -1;
+}
+
+/* About "i" button */
+#aboutBtn {
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  font-size: 10px;
+  font-weight: bold;
+  background-color: #50555b;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+#aboutBtn:hover {
+  background-color: #0066cc;
+}
+
+/* Modal backdrop */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(5px);
+}
+
+/* Modal box */
+.modal-content {
+  background: white;
+  max-width: 480px;
+  margin: 10vh auto;
+  padding: 25px 30px;
+  border-radius: 8px;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+/* Close icon */
+.modal .close {
+  position: absolute;
+  top: 12px;
+  right: 15px;
+  font-size: 22px;
+  font-weight: bold;
+  color: #004080;
+  cursor: pointer;
+}
+
+.modal .close:hover {
+  color: red;
+}
+
 
   </style>
 </head>
@@ -285,7 +359,6 @@
     <img src="https://www.mace.ac.in/images/logo-footer.png" class="logo" alt="MACE Logo" />
     <h1>MA College of Engineering - SCGPA & CGPA Calculator<br>(Autonomous Batch)</h1>
     <button id="cgpaHelpBtn" title="What is CGPA?" class="help-btn">?</button>
-
 
     <div id="subject-container"></div>
     <button class="add-btn" onclick="addSubject()">+ Add Subject</button>
@@ -307,6 +380,24 @@
     <button class="clear-btn" onclick="clearSCGPAFields()">CLEAR DATA</button>
     <button class="add-btn" onclick="openGradeEditor()">Edit Grade Points</button>
 
+    <!-- About Button at Bottom Right Inside Grid -->
+<div class="about-button-wrapper">
+  <button id="aboutBtn" title="About the developer">i</button>
+</div>
+
+<!-- Modal -->
+<div id="aboutModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h3>About the developer</h3>
+    <p>This site was created by <strong>Samuel M Dileep</strong>, a passionate developer from MA College of Engineering (2024-2028).</p>
+    <p><strong>GitHub:</strong> <a href="https://github.com/samuelmdileep" target="_blank">github.com/samuelmdileep</a></p>
+    <p><strong>Email:</strong> <a href="mailto:samuelmdileep@gmail.com">samuelmdileep@gmail.com</a></p>
+    <p>Feel free to reach out for suggestions or feedback!</p>
+  </div>
+</div>
+
+
     <!-- Grade Editor Overlay -->
     <div class="overlay" id="gradeEditor">
       <div class="popup">
@@ -325,6 +416,8 @@
       </div>
     </div>
   </div>
+
+
   <!-- Help Modal (Place outside .grid at end of body) -->
 <div id="cgpaModal" class="modal">
   <div class="modal-content">
@@ -361,7 +454,7 @@
 
   <p style="margin-top: 10px;">👉 To see the detailed Grade Point System or edit grades, please click on <strong>"Edit Grade Points"</strong>.</p>
 </div>
-
+ 
 
   <script>
    const defaultGrades = {
@@ -884,6 +977,20 @@ function clearCGPAFields() {
       modal.style.display = 'none';
     }
   });
+</script>
+
+<script>
+  const aboutModal = document.getElementById("aboutModal");
+  const aboutBtn = document.getElementById("aboutBtn");
+  const closeAbout = aboutModal.querySelector(".close");
+
+  aboutBtn.onclick = () => aboutModal.style.display = "block";
+  closeAbout.onclick = () => aboutModal.style.display = "none";
+  window.onclick = e => {
+    if (e.target === aboutModal) {
+      aboutModal.style.display = "none";
+    }
+  };
 </script>
 
 
