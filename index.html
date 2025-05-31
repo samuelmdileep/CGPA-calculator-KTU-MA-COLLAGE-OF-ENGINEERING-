@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="icon" href="macelogo.png" type="image/png">
+   <link rel="icon" href="macelogo.png" type="image/png">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MA College of Engineering - SCGPA & CGPA Calculator</title>
@@ -181,6 +181,102 @@
   right: 20px;
   top: 20px;
 }
+/* Help button style */
+/* Ensure the grid container is relatively positioned */
+.grid {
+  position: relative;
+}
+
+ .help-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background-color: #004080;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+  }
+
+ /* Modal backdrop */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  left: 0; top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  overflow: auto; /* allows modal to scroll if viewport too small */
+}
+
+/* Modal content box */
+.modal-content {
+  background: white;
+  max-width: 480px;
+  margin: 10vh auto;
+  padding: 25px 30px;
+  border-radius: 8px;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+
+  /* Scrollability */
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+/* Header style */
+.modal-content h3 {
+  margin-top: 0;
+  color: #004080;
+}
+
+/* Table styling */
+.modal-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.modal-content th, .modal-content td {
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  text-align: center;
+}
+
+.modal-content thead th {
+  background-color: #004080;
+  color: white;
+}
+
+/* Close button */
+.close {
+  position: absolute;
+  top: 12px;
+  right: 15px;
+  font-size: 22px;
+  font-weight: bold;
+  color: #004080;
+  cursor: pointer;
+}
+
+.close:hover {
+  color: #ff0000;
+}
 
   </style>
 </head>
@@ -188,6 +284,8 @@
   <div class="container">
     <img src="https://www.mace.ac.in/images/logo-footer.png" class="logo" alt="MACE Logo" />
     <h1>MA College of Engineering - SCGPA & CGPA Calculator<br>(Autonomous Batch)</h1>
+    <button id="cgpaHelpBtn" title="What is CGPA?" class="help-btn">?</button>
+
 
     <div id="subject-container"></div>
     <button class="add-btn" onclick="addSubject()">+ Add Subject</button>
@@ -227,6 +325,43 @@
       </div>
     </div>
   </div>
+  <!-- Help Modal (Place outside .grid at end of body) -->
+<div id="cgpaModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+     <h3>Understanding SCGPA and CGPA</h3>
+  
+  <p><strong>SCGPA</strong> (Semester Grade Point Average) measures your academic performance for a single semester.</p>
+  
+  <p><strong>CGPA</strong> (Cumulative Grade Point Average) is the average of all your semester GPAs till date.</p>
+
+  <p><strong>CGPA Formula:</strong></p>
+  <p style="font-weight: bold; font-size: 1.1em; margin: 10px 0;">
+    CGPA = <em>Sum of (Grade Point × Credit)</em> ÷ <em>Total Credits</em>
+  </p>
+
+  <h4>Grading System:</h4>
+  <table>
+    <thead>
+      <tr><th>Marks Range</th><th>Grade</th><th>Grade Point</th></tr>
+    </thead>
+  <tbody>
+      <tr><td style="border: 1px solid #ccc; padding: 8px;">90 - 100</td><td>S</td><td>10</td></tr>
+      <tr><td style="border: 1px solid #ccc; padding: 8px;">85 - 89</td><td>A+</td><td>9.5</td></tr>
+      <tr><td style="border: 1px solid #ccc; padding: 8px;">80 - 84</td><td>A</td><td>9.0</td></tr>
+      <tr><td style="border: 1px solid #ccc; padding: 8px;">75 - 79</td><td>B+</td><td>8.5</td></tr>
+      <tr><td style="border: 1px solid #ccc; padding: 8px;">70 - 74</td><td>B</td><td>8.0</td></tr>
+      <tr><td style="border: 1px solid #ccc; padding: 8px;">65 - 69</td><td>C+</td><td>7.5</td></tr>
+      <tr><td style="border: 1px solid #ccc; padding: 8px;">60 - 64</td><td>C</td><td>7.0</td></tr>
+      <tr><td style="border: 1px solid #ccc; padding: 8px;">55 - 59</td><td>D</td><td>6.0</td></tr>
+      <tr><td style="border: 1px solid #ccc; padding: 8px;">50 - 54</td><td>P</td><td>5.5</td></tr>
+      <tr><td style="border: 1px solid #ccc; padding: 8px;">Below 50</td><td>F (Fail)</td><td>0</td></tr>
+    </tbody>
+  </table>
+
+  <p style="margin-top: 10px;">👉 To see the detailed Grade Point System or edit grades, please click on <strong>"Edit Grade Points"</strong>.</p>
+</div>
+
 
   <script>
    const defaultGrades = {
@@ -731,16 +866,26 @@ function clearCGPAFields() {
 
  
 </script>
-  
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-82WVNK1L9G"></script>
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  const helpBtn = document.querySelector('.help-btn');
+  const modal = document.getElementById('cgpaModal');
+  const closeBtn = modal.querySelector('.close');
 
-  gtag('config', 'G-82WVNK1L9G');
+  helpBtn.addEventListener('click', () => {
+    modal.style.display = 'block';
+  });
+
+  closeBtn.addEventListener('click', () => {
+    modal.style.display = 'none';
+  });
+
+  window.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.style.display = 'none';
+    }
+  });
 </script>
+
 
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-82WVNK1L9G"></script>
