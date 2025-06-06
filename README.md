@@ -108,3 +108,4 @@ Built by **Samuel M Dileep**
 ## 🌐 Live Site
 
 [`samuelmdileep.github.io/CGPA-calculator-KTU-MA-COLLAGE-OF-ENGINEERING-/`](https://samuelmdileep.github.io/CGPA-calculator-KTU-MA-COLLAGE-OF-ENGINEERING-/)
+[`https://macecgpacalculator.netlify.app/`](https://macecgpacalculator.netlify.app/)
