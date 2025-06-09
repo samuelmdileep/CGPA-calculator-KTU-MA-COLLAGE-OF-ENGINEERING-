@@ -1,6 +1,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
+<head>
 <meta name="description" content="Simple and accurate CGPA calculator for MACE students.">
 <meta name="robots" content="index, follow">
 <meta name="keywords" content="MACE CGPA, CGPA calculator, MACE engineering grades">
@@ -68,7 +69,7 @@
     .add-btn { background-color: #004080; }
     .calc-btn { background-color: #004080; }
     .clear-btn { background-color: #f61d1d; }
-    .syllabus-btn { background-color: #036c9d; padding: 12px 24px; text-decoration: none; font-weight: bold; border-radius: 8px; display: inline-block; }
+    .syllabus-btn { background-color: #24f381; padding: 12px 24px; text-decoration: none; font-weight: bold; border-radius: 8px; display: inline-block; }
 
     .result {
       margin-top: 20px;
@@ -285,8 +286,11 @@
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 20px;
   padding: 20px;
-  position: relative; /* Make grid a positioned container */
+  position: relative; 
+  
 }
+
+/* Make grid a positioned container */
 /* Button container inside grid */
 .about-button-wrapper {
   display: flex;
@@ -315,44 +319,111 @@
   background-color: #0066cc;
 }
 
-/* Modal backdrop */
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 9999;
-  left: 0;
-  top: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0,0,0,0.5);
-  backdrop-filter: blur(5px);
-}
-
-/* Modal box */
 .modal-content {
   background: white;
+  width: 90%;
   max-width: 480px;
-  margin: 10vh auto;
-  padding: 25px 30px;
-  border-radius: 8px;
+  margin: 30px auto; /* 👈 Opens from near top */
+  padding: 25px 20px;
+  border-radius: 10px;
   position: relative;
   box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  animation: slideDown 0.3s ease-out; /* 👈 Smooth slide animation */
 }
 
-/* Close icon */
-.modal .close {
-  position: absolute;
-  top: 12px;
-  right: 15px;
-  font-size: 22px;
-  font-weight: bold;
-  color: #004080;
-  cursor: pointer;
+@keyframes slideDown {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
-.modal .close:hover {
-  color: red;
-}
+
+  /* Layout for subject row */
+  #subject-container .subject-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .subject-row input[type="text"] {
+    flex: 2 1 55%;
+    min-width: 120px;
+  }
+
+  .subject-row input[type="number"],
+  .subject-row select {
+    flex: 1 1 20%;
+    min-width: 60px;
+  }
+
+  /* General button styles */
+  .add-btn, .calc-btn, .clear-btn, .syllabus-btn {
+    margin: 8px 5px;
+    padding: 10px 14px;
+    font-size: 16px;
+    border-radius: 8px;
+  }
+
+  /* SCGPA input spacing */
+  .scgp-row {
+    margin-bottom: 8px;
+  }
+
+  /* Add SCGPA -> Calculate Total CGPA spacing */
+  #scgpInputs + .add-btn {
+    margin-top: 12px;
+  }
+
+  .calc-btn:last-of-type {
+    margin-top: 10px;
+  }
+
+  /* Add extra spacing between Calculate CGPA and Print Summary */
+  #totalCGPResult + .calc-btn {
+    margin-top: 40px;
+  }
+
+  /* Extra spacing before syllabus */
+  .syllabus-btn {
+    margin-top: 25px;
+  }
+
+  /* Align CLEAR DATA and Edit Grade Points in one row */
+  .footer-btns {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  /* Responsive layout */
+  @media (max-width: 600px) {
+    .add-btn, .calc-btn, .clear-btn, .syllabus-btn {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+    }
+
+    .subject-row {
+      flex-direction: column;
+    }
+
+    .subject-row input,
+    .subject-row select {
+      width: 100%;
+    }
+
+    .footer-btns {
+      flex-direction: column;
+    }
+  }
 
 
   </style>
@@ -379,7 +450,7 @@
     <div class="result" id="totalCGPResult"></div>
 
     <button class="calc-btn" onclick="printSummary()">🖨️ Print Summary</button>
-    <a href="departments.html" class="syllabus-btn">📘 View Syllabus</a>
+    <button class="syllabus-btn" onclick="viewsyllabus()">📘 View Syllabus</button>
     <button class="clear-btn" onclick="clearSCGPAFields()">CLEAR DATA</button>
     <button class="add-btn" onclick="openGradeEditor()">Edit Grade Points</button>
 
@@ -469,6 +540,9 @@
 // Get the custom grade points from localStorage, or default to predefined ones
 function getGradePoints() {
     return JSON.parse(localStorage.getItem("customGradePoints")) || defaultGrades;
+}
+function viewsyllabus() {
+  window.location.href = "departments.html";
 }
 
 // Open the grade editor and display current grade points
@@ -724,7 +798,7 @@ function addSubject() {
   }
 
   // Reset the SCGPA result text
-  document.getElementById("scgpResult").textContent = "";
+   document.getElementById("scgpResult").textContent = "";
 
   // Clear stored data in localStorage
   localStorage.removeItem("subjectData");
@@ -963,37 +1037,67 @@ function clearCGPAFields() {
  
 </script>
 <script>
+  // CGPA Modal
   const helpBtn = document.querySelector('.help-btn');
-  const modal = document.getElementById('cgpaModal');
-  const closeBtn = modal.querySelector('.close');
+  const cgpaModal = document.getElementById('cgpaModal');
+  const closeCgpa = cgpaModal.querySelector('.close');
 
-  helpBtn.addEventListener('click', () => {
-    modal.style.display = 'block';
-  });
+  // About Modal
+  const aboutBtn = document.getElementById('aboutBtn');
+  const aboutModal = document.getElementById('aboutModal');
+  const closeAbout = aboutModal.querySelector('.close');
 
-  closeBtn.addEventListener('click', () => {
-    modal.style.display = 'none';
-  });
+  // Track current modal
+  let currentModal = null;
 
+  function openModal(modalElement, type) {
+    modalElement.style.display = 'block';
+    currentModal = type;
+
+    if (!history.state || history.state.modal !== type) {
+      history.pushState({ modal: type }, '');
+    }
+  }
+
+  function closeModal(modalElement, type) {
+    modalElement.style.display = 'none';
+    currentModal = null;
+
+    if (history.state?.modal === type) {
+      history.back(); // This will trigger popstate
+    }
+  }
+
+  // Event listeners
+  helpBtn.addEventListener('click', () => openModal(cgpaModal, 'cgpa'));
+  closeCgpa.addEventListener('click', () => closeModal(cgpaModal, 'cgpa'));
+
+  aboutBtn.addEventListener('click', () => openModal(aboutModal, 'about'));
+  closeAbout.addEventListener('click', () => closeModal(aboutModal, 'about'));
+
+  // Click outside to close
   window.addEventListener('click', (e) => {
-    if (e.target === modal) {
-      modal.style.display = 'none';
+    if (e.target === cgpaModal) closeModal(cgpaModal, 'cgpa');
+    if (e.target === aboutModal) closeModal(aboutModal, 'about');
+  });
+
+  // Handle Android back
+  window.addEventListener('popstate', (e) => {
+    if (currentModal === 'cgpa') {
+      cgpaModal.style.display = 'none';
+      currentModal = null;
+    } else if (currentModal === 'about') {
+      aboutModal.style.display = 'none';
+      currentModal = null;
     }
   });
-</script>
 
-<script>
-  const aboutModal = document.getElementById("aboutModal");
-  const aboutBtn = document.getElementById("aboutBtn");
-  const closeAbout = aboutModal.querySelector(".close");
-
-  aboutBtn.onclick = () => aboutModal.style.display = "block";
-  closeAbout.onclick = () => aboutModal.style.display = "none";
-  window.onclick = e => {
-    if (e.target === aboutModal) {
-      aboutModal.style.display = "none";
+  // Initial state push to make back button not exit immediately
+  window.addEventListener('load', () => {
+    if (!history.state) {
+      history.replaceState({ modal: null }, '');
     }
-  };
+  });
 </script>
 
 
