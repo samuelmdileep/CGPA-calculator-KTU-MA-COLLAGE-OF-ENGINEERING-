@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="icon" href="macelogo.png" type="image/png"> 
+   <link rel="icon" href="macelogo.png" type="image/png">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MA College of Engineering - SCGPA & CGPA Calculator</title>
@@ -143,6 +143,83 @@
     background-color: #036c9d;  /* Lighter blue on hover */
     box-shadow: 0 5px 12px rgba(3, 108, 157, 0.8);
   }
+.button-group {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 1100px;
+  margin: 30px auto 0 auto;
+  gap: 20px;
+}
+
+
+.syllabus-block {
+  flex: 1 1 calc(25% - 20px);
+  box-sizing: border-box;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+
+/* Main buttons */
+.main-btn {
+  background-color: #004080;
+  color: white;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  width: 100%;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(0, 64, 128, 0.6);
+  transition: background-color 0.3s ease;
+}
+
+.main-btn:hover {
+  background-color: #036c9d;
+}
+
+.syllabus-section.active {
+  display: block;
+}
+
+/* The syllabus section will break out to full width */
+.syllabus-section {
+  display: none;
+  width: 100%;
+  flex-basis: 100%;
+  margin-top: 20px;
+  transition: all 0.3s ease;
+}
+
+
+
+
+/* ✅ Responsive - Stack buttons on small screens */
+
+  @media (max-width: 768px) {
+  .syllabus-block {
+    flex: 1 1 100%; /* stacked on mobile */
+  }
+
+  .main-btn {
+    margin-bottom: 10px;
+  }
+
+  .syllabus-section {
+    display: none;
+    margin-top: 10px;
+  }
+
+  .syllabus-section.active {
+    display: block;
+  }
+}
+
+
+    
 </style>
 
 </head>
@@ -162,23 +239,19 @@
   </button>
 </div>
 
-
-    <!-- Buttons for viewing syllabus for each semester -->
-    <button class="syllabus-btn" onclick="showSyllabus('S1')">📘 View S1 Syllabus</button>
-    <button class="syllabus-btn" onclick="showSyllabus('S2')">📘 View S2 Syllabus</button>
-    <button class="syllabus-btn" onclick="showSyllabus('S3')">📘 View S3 Syllabus</button>
-    <button class="syllabus-btn" onclick="showSyllabus('S4')">📘 View S4 Syllabus</button>
-    <button class="syllabus-btn" onclick="showSyllabus('S5')">📘 View S5 Syllabus</button>
-    <button class="syllabus-btn" onclick="showSyllabus('S6')">📘 View S6 Syllabus</button>
-    <button class="syllabus-btn" onclick="showSyllabus('S7')">📘 View S7 Syllabus</button>
-    <button class="syllabus-btn" onclick="showSyllabus('S8')">📘 View S8 Syllabus</button>
-    <div style="text-align: center; margin-top: 20px; font-weight: bold; color: #d9534f;">
+<div style="text-align: center; margin-top: 20px; font-weight: bold; color: #d9534f;">
       ⚠️ Note: Minor and Honors course credits are not included in CGPA calculation.
     </div>
    
-    
 
-        <div id="S1" class="syllabus-section">
+<!--btn group-->
+<div class="button-group">
+
+<div class="syllabus-block">
+  <button class="main-btn" onclick="toggleSyllabus('S1')">📘 View S1 Syllabus</button>
+  </div>
+    <!-- S1 table here -->
+     <div id="S1" class="syllabus-section">
           <h2>Semester 1 Syllabus</h2>
           <table class="syllabus-table">
             <tr>
@@ -256,10 +329,16 @@
         <div style="text-align:center; margin-top: 10px;">
           <button onclick="importToCalculator('S1')" class="import-btn">📥 Import to Calculator</button>
         </div>  
-      </div>      
+      
         
-        
-        <div id="S2" class="syllabus-section">
+  </div>
+
+
+<div class="syllabus-block">
+  <button class="main-btn" onclick="toggleSyllabus('S2')">📘 View S2 Syllabus</button>
+</div>
+    <!-- S2 table here -->
+      <div id="S2" class="syllabus-section">
           <h2>Semester 2 Syllabus</h2>
           <table class="syllabus-table">
             <tr>
@@ -339,9 +418,14 @@
     </div>
   </div>
     
-   
-    
-    <div id="S3" class="syllabus-section">
+  
+
+<div class="syllabus-block">
+  <button class="main-btn" onclick="toggleSyllabus('S3')">📘 View S3 Syllabus</button>
+</div>
+    <!-- S3 table here -->
+
+     <div id="S3" class="syllabus-section">
       <h2>Semester 3 Syllabus</h2>
       <table class="syllabus-table">
         <tr>
@@ -419,10 +503,14 @@
     <div style="text-align:center; margin-top: 10px;">
       <button onclick="importToCalculator('S3')" class="import-btn">📥 Import to Calculator</button>
     </div>
-  </div>
-    
+ 
 
-    <div id="S4" class="syllabus-section">
+  </div>
+<div class="syllabus-block">
+  <button class="main-btn" onclick="toggleSyllabus('S4')">📘 View S4 Syllabus</button>
+</div>
+    <!-- S4 table here -->
+     <div id="S4" class="syllabus-section">
       <h2>Semester 4 Syllabus</h2>
       <table class="syllabus-table">
         <tr>
@@ -503,7 +591,11 @@
   </div>
     
 
-    <div id="S5" class="syllabus-section">
+<div class="syllabus-block">
+  <button class="main-btn" onclick="toggleSyllabus('S5')">📘 View S5 Syllabus</button>
+</div>
+    <!-- S5 table here -->
+     <div id="S5" class="syllabus-section">
       <h2>Semester 5 Syllabus</h2>
       <table class="syllabus-table">
         <tr>
@@ -582,9 +674,13 @@
       <button onclick="importToCalculator('S5')" class="import-btn">📥 Import to Calculator</button>
     </div>
   </div>
-    
-    
-    <div id="S6" class="syllabus-section">
+ 
+
+<div class="syllabus-block">
+  <button class="main-btn" onclick="toggleSyllabus('S6')">📘 View S6 Syllabus</button>
+</div>
+    <!-- S6 table here -->
+      <div id="S6" class="syllabus-section">
       <h2>Semester 6 Syllabus</h2>
       <table class="syllabus-table">
         <tr>
@@ -662,9 +758,12 @@
     <div style="text-align:center; margin-top: 10px;">
       <button onclick="importToCalculator('S6')" class="import-btn">📥 Import to Calculator</button>
     </div>
-  </div>
     
-
+  </div>
+<div class="syllabus-block">
+  <button class="main-btn" onclick="toggleSyllabus('S7')">📘 View S7 Syllabus</button>
+</div>
+    <!-- S7 table here -->
      <div id="S7" class="syllabus-section">
       <h2>Semester 7 Syllabus</h2>
       <table class="syllabus-table">
@@ -750,8 +849,11 @@
     </div>
   </div>
     
-
-    <div id="S8" class="syllabus-section">
+<div class="syllabus-block">
+  <button class="main-btn" onclick="toggleSyllabus('S8')">📘 View S8 Syllabus</button>
+</div>
+    <!-- S8 table here -->
+     <div id="S8" class="syllabus-section">
       <h2>Semester 8 Syllabus</h2>
       <table class="syllabus-table">
         <tr>
@@ -825,6 +927,9 @@
     </div>
   </div>
   
+  </div>
+
+    
  <!-- Modal HTML (place at the end of the body) -->
 <div id="popupModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9999; opacity:0; transition:opacity 0.3s;">
   <div style="
@@ -887,29 +992,7 @@
     </div>
   </div>
   <script>
-    function showSyllabus(id) {
-      // Hide all syllabus sections
-      document.querySelectorAll('.syllabus-section').forEach(section => {
-        section.classList.remove('show');
-      });
-      // Show the selected section
-      document.getElementById(id).classList.add('show');
-    }
-  
-   
-
-</script>
-<script>
-  function showSyllabus(id) {
-    document.querySelectorAll(".syllabus-section").forEach(sec => sec.classList.remove("show"));
-    document.getElementById(id).classList.add("show");
-  }
-</script>
-<script>
-  function showSyllabus(id) {
-    document.querySelectorAll(".syllabus-section").forEach(sec => sec.classList.remove("show"));
-    document.getElementById(id).classList.add("show");
-  }
+    
 
   function importToCalculator(semesterId) {
     if (semesterId === 'S8') {
@@ -997,6 +1080,20 @@
       popup.style.display = 'none';
     }, 300); // Match the fade-out duration
   }
+</script>
+
+<script>
+
+function toggleSyllabus(id) {
+  const allSections = document.querySelectorAll('.syllabus-section');
+  allSections.forEach(section => {
+    if (section.id === id) {
+      section.classList.toggle('active');
+    } else {
+      section.classList.remove('active');
+    }
+  });
+}
 </script>
 
 </body>
