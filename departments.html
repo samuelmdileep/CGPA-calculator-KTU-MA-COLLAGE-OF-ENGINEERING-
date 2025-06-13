@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="icon" href="macelogo.png" type="image/png"> 
+   <link rel="icon" href="macelogo.png" type="image/png">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>MACE Departments</title>
@@ -75,6 +75,7 @@
       font-weight: 700;
       box-shadow: 0 3px 8px rgba(246, 29, 29, 0.6);
       transition: background-color 0.3s ease;
+       margin-bottom: 35px; /* space below grid before button */
     }
 
     .back-btn:hover {
@@ -86,6 +87,11 @@
 <body>
   <div class="container">
     <h1>Select Department</h1>
+    <div class="back-btn-container">
+      <button onclick="location.href='index.html'" class="back-btn">
+        🔙 Back to CGPA Calculator
+      </button>
+    </div>
     <div class="dept-grid">
       <a href="aiml.html" class="dept-btn">AI & ML</a>
       <a href="cs.html" class="dept-btn">Computer Science</a>
@@ -96,11 +102,7 @@
       <a href="ds.html" class="dept-btn">Data Science</a>
     </div>
 
-    <div class="back-btn-container">
-      <button onclick="location.href='index.html'" class="back-btn">
-        🔙 Back to CGPA Calculator
-      </button>
-    </div>
+    
   </div>
 </body>
 </html>
